@@ -7,7 +7,7 @@ import Hakyll
 --------------------------------------------------------------------------------
 main :: IO ()
 main = hakyll $ do
-    let postPattern = "posts/**.md"
+    let postPattern = "posts/**.md" .||. "posts/**.md.draft"
 
     let defaultTemplate = "templates/default.html"
     let archiveTemplate = "templates/archive.html"
