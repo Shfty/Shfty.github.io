@@ -1,6 +1,8 @@
 <article>
     <section class="header">
-        Posted on $date$
+        $if(date)$
+            Posted on $date$
+        $endif$
         $if(author)$
             by $author$
         $endif$

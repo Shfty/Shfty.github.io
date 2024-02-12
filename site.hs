@@ -12,15 +12,10 @@ main = hakyll $ do
     let defaultTemplate = "templates/default.html"
     let archiveTemplate = "templates/archive.html"
     let postTemplate = "templates/post.html"
-    let postImageTemplate = "posts/**.png" .||. "posts/**.gif" .||. "posts/**.mkv"
-    let imageTemplate = "images/*"
+    let imageTemplate = "images/*" .||. "posts/**.png" .||. "posts/**.gif" .||. "posts/**.mkv"
     let cssTemplate = "css/*"
 
     match imageTemplate $ do
-        route idRoute
-        compile copyFileCompiler
-
-    match postImageTemplate $ do
         route idRoute
         compile copyFileCompiler
 
@@ -46,7 +41,7 @@ main = hakyll $ do
     create ["archive.html"] $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAll postPattern
+            posts <- loadAll postPattern
             let archiveCtx =
                     listField "posts" postCtx (return posts)
                         `mappend` constField "title" "Archives"
@@ -60,7 +55,7 @@ main = hakyll $ do
     match "index.html" $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAll postPattern
+            posts <- loadAll postPattern
             let indexCtx =
                     listField "posts" postCtx (return posts)
                         `mappend` defaultContext
