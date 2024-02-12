@@ -1,10 +1,9 @@
 ---
+title: Survival Horror
+git: shfty-unity/SurvivalHorror
 published: 2024-02-08
+todo: Evaluate
 ---
-
-## unity/SurvivalHorror
-
-TODO: Evaluate
 
 Gameplay prototype patterned after early Resident Evil.
 

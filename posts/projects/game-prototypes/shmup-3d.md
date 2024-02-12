@@ -1,11 +1,9 @@
 ---
+title: Shmup 3D
+git: shfty-unreal/Shmup3D
 published: 2024-02-08
+todo: Screenshots, GIFs
 ---
-
-## unreal/Shmup3D
-
-TODO: Screenshots
-TODO: GIFs
 
 Prototype aiming to lift traditional scrolling shooter gameplay into full 3D.
 Inspired by the Nier titles' approach to projectiles; features a simple demo stage,

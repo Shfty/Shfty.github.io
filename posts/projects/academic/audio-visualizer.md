@@ -1,11 +1,9 @@
 ---
+title: Audio Visualizer
+git: shfty-csharp/AudioVisualizer
 published: 2024-02-08
+todo: Screenshots, GIFs
 ---
-
-## csharp/AudioVisualizer
-
-TODO: Screenshots
-TODO: GIFs
 
 Year 3 Post-Production and Sound Design team project; an XNA-based 3D audio visualizer
 

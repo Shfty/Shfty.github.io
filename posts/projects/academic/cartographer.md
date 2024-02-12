@@ -1,11 +1,9 @@
 ---
+title: Cartographer
+git: shfty-cpp/Cartographer
 published: 2024-02-08
+todo: Screenshots, GIFs
 ---
-
-## c++/Cartographer
-
-TODO: Screenshots
-TODO: GIFs
 
 University thesis project; generates meshes from OpenStreetMap data
 

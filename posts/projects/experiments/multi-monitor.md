@@ -1,11 +1,9 @@
 ---
+title: Multi-Monitor
+git: shfty-unity/MultiMonitor
 published: 2024-02-08
+todo: Screenshots, GIFs
 ---
-
-## unity/MultiMonitor
-
-TODO: Screenshots
-TODO: GIFs
 
 Experimental ultrawide rendering project; renders an individual perspective-corrected viewport to each monitor.
 

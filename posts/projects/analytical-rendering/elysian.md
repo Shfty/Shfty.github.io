@@ -1,8 +1,8 @@
 ---
+title: Elysian
+git: Shfty/elysian
 published: 2024-02-08
 ---
-
-## Elysian
 
 Pure functional row-polymorphic programming language.
 

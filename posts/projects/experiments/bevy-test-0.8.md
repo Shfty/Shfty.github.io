@@ -1,7 +1,7 @@
 ---
+title: 'Bevy Test 0.8'
+git: shfty-rust/bevy-test-0.8
 published: 2024-02-08
 ---
-
-# bevy-test-0.8
 
 Various demo projects built around Bevy 0.8

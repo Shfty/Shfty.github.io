@@ -1,10 +1,9 @@
 ---
+title: Shifty Bar
+git: shfty-rust/shifty-bar
 published: 2024-02-08
+todo: Screenshots
 ---
-
-## rust/shifty-bar
-
-TODO: Screenshots
 
 Custom lemonbar-compatible bar UI
 

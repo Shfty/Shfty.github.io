@@ -1,8 +1,8 @@
 ---
+title: Fox VR
+git: shfty-unreal/FoxVR
 published: 2024-02-08
 ---
-
-## unreal/FoxVR
 
 VR gameplay prototype inspired by Star Fox 64.
 

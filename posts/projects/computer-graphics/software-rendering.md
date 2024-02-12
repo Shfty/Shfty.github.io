@@ -1,10 +1,8 @@
 ---
+title: Software Rendering
+git: shfty-rust/software_rendering
 published: 2024-02-08
+todo: Screenshots, GIFs
 ---
-
-## rust/software_rendering
-
-TODO: Screenshots
-TODO: GIFs
 
 2D software-rasterized demo that uses a palettized framebuffer to implement novel afterimage effects.
