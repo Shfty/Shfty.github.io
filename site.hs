@@ -12,12 +12,19 @@ main = hakyll $ do
     let defaultTemplate = "templates/default.html"
     let archiveTemplate = "templates/archive.html"
     let postTemplate = "templates/post.html"
+    let postImageTemplate = "posts/**.png" .||. "posts/**.gif" .||. "posts/**.mkv"
+    let imageTemplate = "images/*"
+    let cssTemplate = "css/*"
 
-    match "images/*" $ do
+    match imageTemplate $ do
         route idRoute
         compile copyFileCompiler
 
-    match "css/*" $ do
+    match postImageTemplate $ do
+        route idRoute
+        compile copyFileCompiler
+
+    match cssTemplate $ do
         route idRoute
         compile compressCssCompiler
 
