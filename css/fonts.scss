@@ -1,0 +1,50 @@
+@import 'fonts/fira-sans';
+@import 'fonts/fira-code-nerd';
+
+:root {
+  --text-font: 'Fira Sans';
+  --header-font: 'FiraCode Nerd Font';
+  --code-font: 'FiraCode Nerd Font';
+}
+
+body {
+    font-weight: 300;
+    font-family: var(--header-font);
+}
+
+main {
+    font-family: var(--text-font);
+}
+
+.fixed-width > * {
+    font-size: 1.0rem;
+    line-height: 1.3rem;
+}
+
+.fixed-width {
+    font-size: 0;
+    line-height: 0;
+}
+
+
+b {
+    font-weight: 500;
+}
+
+panel-sidebar header a {
+    text-decoration: none;
+}
+
+article .header {
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+h1 {
+    font-size: 1.5rem;
+}
+
+h2 {
+    font-size: 1.25rem;
+}
+

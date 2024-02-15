@@ -18,6 +18,13 @@ packages:
       size: 217
   original:
     hackage: hakyll-sass-0.2.4
+- completed:
+    hackage: hakyll-images-1.2.1@sha256:80081815d381096cce424efe8edbb668ae4bba78e9b022830f7a49276e5a8fe2,2358
+    pantry-tree:
+      sha256: 5369ab76fa5c1f9ca05dbe912e89501e5ee6acc347321309e3fe94417fadb8cb
+      size: 1189
+  original:
+    hackage: hakyll-images-1.2.1
 snapshots:
 - completed:
     sha256: a81fb3877c4f9031e1325eb3935122e608d80715dc16b586eb11ddbff8671ecd

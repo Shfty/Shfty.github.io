@@ -1,3 +1,158 @@
-h1 {
-    color: #FF0000
-};
+:root {
+    --color-bg-transparent: #282A36CC;
+    --color-bg: #282A36;
+    --color-line: #44475A;
+    --color-fg: #F8F8F2;
+    --color-comment: #6272A4;
+    --color-cyan: #8BE9FD;
+    --color-green: #50FA7B;
+    --color-orange: #FFB86C;
+    --color-pink: #FF79C6;
+    --color-purple: #BD93F9;
+    --color-red: #FF5555;
+    --color-yellow: #F1FA8C;
+}
+
+*[data-fg="bg"] {
+    color: var(--color-bg)
+}
+
+*[data-fg="line"] {
+    color: var(--color-line)
+}
+
+*[data-fg="comment"] {
+    color: var(--color-comment)
+}
+
+*[data-fg="cyan"] {
+    color: var(--color-cyan)
+}
+
+*[data-fg="green"] {
+    color: var(--color-green)
+}
+
+*[data-fg="orange"] {
+    color: var(--color-orange)
+}
+
+*[data-fg="pink"] {
+    color: var(--color-pink)
+}
+
+*[data-fg="purple"] {
+    color: var(--color-purple)
+}
+
+*[data-fg="red"] {
+    color: var(--color-red)
+}
+
+*[data-fg="yellow"] {
+    color: var(--color-yellow)
+}
+
+*[data-bg="bg"] {
+    background-color: var(--color-bg)
+}
+
+*[data-bg="line"] {
+    background-color: var(--color-line)
+}
+
+*[data-bg="comment"] {
+    background-color: var(--color-comment)
+}
+
+*[data-bg="cyan"] {
+    background-color: var(--color-cyan)
+}
+
+*[data-bg="green"] {
+    background-color: var(--color-green)
+}
+
+*[data-bg="orange"] {
+    background-color: var(--color-orange)
+}
+
+*[data-bg="pink"] {
+    background-color: var(--color-pink)
+}
+
+*[data-bg="purple"] {
+    background-color: var(--color-purple)
+}
+
+*[data-bg="red"] {
+    background-color: var(--color-red)
+}
+
+*[data-bg="yellow"] {
+    background-color: var(--color-yellow)
+}
+
+html {
+    background-image: image("base.png");
+    background-size: cover;
+    background-position: center;
+}
+
+body {
+    color: var(--color-fg);
+}
+
+footer {
+    color: var(--color-comment);
+    background-color: var(--color-line);
+}
+
+article .header {
+  color: var(--color-comment);
+}
+
+/* unvisited link */
+a:link, a:visited {
+  color: var(--color-purple);
+}
+
+/* mouse over link */
+a:hover {
+  color: var(--color-pink);
+}
+
+/* selected link */
+a:active {
+  color: var(--color-cyan);
+}
+
+header {
+    border-color: var(--color-fg);
+    background-color: var(--color-line);
+}
+
+footer {
+  border-color: var(--color-fg);
+}
+
+nav a {
+    color: var(--color-fg);
+    text-decoration: none;
+}
+
+/* unvisited link */
+nav a:link, nav a:visited {
+    color: var(--color-fg);
+}
+
+/* mouse over link */
+nav a:hover {
+    background-color: var(--color-line);
+}
+
+/* selected link */
+nav a:active {
+    background-color: var(--color-fg);
+    color: var(--color-bg);
+}
