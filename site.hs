@@ -172,7 +172,7 @@ main = do
                     >>= relativizeUrls
 
         -- Templates
-        match "templates/*" $ compile templateBodyCompiler
+        match "templates/**.html" $ compile templateBodyCompiler
 
 --------------------------------------------------------------------------------
 postCtx :: Context String

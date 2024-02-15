@@ -94,9 +94,26 @@
 }
 
 html {
-    background-image: image("base.png");
     background-size: cover;
     background-position: center;
+}
+
+@media (aspect-ratio: 1) {
+    html {
+        background-image: image("base.png");
+    }
+}
+
+@media (min-aspect-ratio: 1) {
+    html {
+        background-image: image("base.png");
+    }
+}
+
+@media (max-aspect-ratio: 1) {
+    html {
+        background-image: image("base-vertical.png");
+    }
 }
 
 body {

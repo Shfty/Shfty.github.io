@@ -13,18 +13,23 @@ pre {
 }
 
 panel-sidebar {
-    display: flex;
+    width: 40rch;
     flex-direction: column;
 }
 
 panel-divider {
-    overflow-y: clip;
+    height: 100%;
 }
 
 panel-divider::before {
-    content: "│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A│\A";
-    border-left: 5px var(--color-line);
-    white-space: pre;
+    content: "";
+    display: block;
+    height: 100%;
+    border-style: solid;
+    border-color: var(--color-comment);
+    border-width: 0.1ch;
+    margin-left: 0.4ch;
+    margin-right: 0.425ch;
 }
 
 panel-content {
@@ -34,7 +39,21 @@ panel-content {
 }
 
 panel-sidebar {
-    width: 40rch;
+    display: none;
+}
+
+panel-divider {
+    display: none;
+}
+
+@media only screen and (min-width: 80rch) {
+    panel-sidebar {
+        display: flex;
+    }
+
+    panel-divider {
+        display: block;
+    }
 }
 
 .sourceCode {
@@ -94,6 +113,7 @@ main {
     display: flex;
     flex: auto;
     overflow: scroll;
+    margin-left: 1ch;
 }
 
 footer {
