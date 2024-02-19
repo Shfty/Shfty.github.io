@@ -1,0 +1,37 @@
+* Recursive categories
+  * Generate path metadata for all pages under a given path
+    * Path metadata is like category metadata,
+      but without pruning off the start of the path
+  * Special-case index.md files to represent their parent
+    directory's category instead of acting as a member of it
+  * Use per-page path metadata to generate breadcrumb trails
+  * Use per-category path metadata to generate list pages
+  * Use whole-site path metadata to generate sidebar menu
+    with category pages acting as <detail> elements
+
+* Generalize sidebar / navigation panels under a single reusable component
+  * Fixed-width header / footer + arbitrary content
+
+* Integrate hakyll-images to generate resized copies of background images,
+  serve conditionally via media queries
+
+* File type metadata
+  * Should provide the means to look up a name and icon
+    for purposes of sidebar menu and header readout
+
+* Current page highlight for sidebar
+  * Should be able to style the link representing the active page
+
+* Intelligent open / close for sidebar
+  * Likely won't be able to do global state
+    without introducing cookies or HTML5 local storage
+  * Ergo, the next-nicest approach is to expand all directories
+    above the current category, and leave the rest closed
+
+* Table of Contents support for markdown articles
+  * Display in a right-side panel on sufficiently wide screens
+
+* Prevent divider from shrinking horizontally on narrow screens
+
+* JavaScript-driven scroll position indicator
+  * Update main header to show percentage whenever scroll position changes

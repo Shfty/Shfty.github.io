@@ -18,6 +18,7 @@ panel-sidebar {
 }
 
 panel-divider {
+    overflow: clip;
     height: 100%;
 }
 
@@ -29,7 +30,7 @@ panel-divider::before {
     border-color: var(--color-comment);
     border-width: 0.1ch;
     margin-left: 0.4ch;
-    margin-right: 0.425ch;
+    margin-right: 0.4ch;
 }
 
 panel-content {
@@ -46,7 +47,7 @@ panel-divider {
     display: none;
 }
 
-@media only screen and (min-width: 80rch) {
+@media only screen and (min-width: 120rch) {
     panel-sidebar {
         display: flex;
     }
@@ -114,6 +115,17 @@ main {
     flex: auto;
     overflow: scroll;
     margin-left: 1ch;
+}
+
+main-content {
+    width: 100%;
+}
+
+@media only screen and (min-width: 80rch) {
+    main-content {
+        width: 80rch;
+        margin: 0 auto;
+    }
 }
 
 footer {

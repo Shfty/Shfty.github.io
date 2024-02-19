@@ -11,6 +11,12 @@
         <pre> </pre>
         <x-glyph type="left-soft-divider" data-fg="purple"></x-glyph>
         <pre> </pre>
+        $if(breadcrumb)$
+            $breadcrumb$
+            <pre> </pre>
+            <x-glyph type="left-soft-divider"></x-glyph>
+            <pre> </pre>
+        $endif$
         <span>$title$</span>
     </div>
     <div class="fixed-width" style="text-align: right; overflow: hidden; white-space: nowrap;">
