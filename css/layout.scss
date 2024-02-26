@@ -5,6 +5,7 @@ html, body {
 
 body {
     display: flex;
+    flex-direction: column;
 }
 
 pre {
@@ -12,25 +13,30 @@ pre {
     margin: 0;
 }
 
+details {
+    font-family: var(--code-font)
+}
+
+details > :not(summary) {
+    margin-left: 2ch;
+    display: block;
+}
+
+summary {
+    list-style-type: None;
+}
+
+details[open] > summary::before {
+    content: var(--glyph-chevron-down);
+}
+
+details:not(details[open]) > summary::before {
+    content: var(--glyph-chevron-right);
+}
+
 panel-sidebar {
     width: 40rch;
     flex-direction: column;
-}
-
-panel-divider {
-    overflow: clip;
-    height: 100%;
-}
-
-panel-divider::before {
-    content: "";
-    display: block;
-    height: 100%;
-    border-style: solid;
-    border-color: var(--color-comment);
-    border-width: 0.1ch;
-    margin-left: 0.4ch;
-    margin-right: 0.4ch;
 }
 
 panel-content {
@@ -43,17 +49,21 @@ panel-sidebar {
     display: none;
 }
 
-panel-divider {
-    display: none;
+.divider-left {
+    margin-left: 0.5rch;
+    border-left: 0.25rch solid var(--color-comment);
+    padding-left: 0.5rch;
+}
+
+.divider-right {
+    margin-right: 0.5rch;
+    border-right: 0.25rch solid var(--color-comment);
+    padding-right: 0.5rch;
 }
 
 @media only screen and (min-width: 120rch) {
     panel-sidebar {
         display: flex;
-    }
-
-    panel-divider {
-        display: block;
     }
 }
 
@@ -112,9 +122,9 @@ nav {
 
 main {
     display: flex;
+    flex-direction: column;
     flex: auto;
     overflow: scroll;
-    margin-left: 1ch;
 }
 
 main-content {
@@ -124,7 +134,8 @@ main-content {
 @media only screen and (min-width: 80rch) {
     main-content {
         width: 80rch;
-        margin: 0 auto;
+        margin: 1rem auto;
+        padding: 0 3rch;
     }
 }
 
@@ -133,3 +144,21 @@ footer {
     text-align: right;
 }
 
+flex-row {
+    display: flex;
+    flex-direction: row;
+    flex: auto;
+    overflow: hidden;
+}
+
+flex-column {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+    overflow: hidden;
+}
+
+flex-scroll {
+    flex: auto;
+    overflow: scroll;
+}

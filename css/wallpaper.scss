@@ -1,0 +1,49 @@
+html {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #262934;
+}
+
+@media only screen {
+    @media (aspect-ratio: 1), (min-aspect-ratio: 1) {
+        html {
+            background-image: image("base.png");
+            background-image: image-set(
+              image('base-480-270.png') 0.25x,
+              image('base-960-540.png') 0.5x,
+              image('base-1920-1080.png') 1x,
+              image('base-3840-2160.png') 2x,
+              image('base.png') 4x
+            );
+            background-image: -webkit-image-set(
+              image('base-480-270.png') 0.25x,
+              image('base-960-540.png') 0.5x,
+              image('base-1920-1080.png') 1x,
+              image('base-3840-2160.png') 2x,
+              image('base.png') 4x
+            );
+        }
+    }
+
+    @media (max-aspect-ratio: 1) {
+        html {
+            background-image: image("base-vertical.png");
+            background-image: image-set(
+              image('base-vertical-270-480.png') 0.25x,
+              image('base-vertical-540-960.png') 0.5x,
+              image('base-vertical-1080-1920.png') 1x,
+              image('base-vertical-2160-3840.png') 2x,
+              image('base-vertical.png') 4x
+            );
+            background-image: -webkit-image-set(
+              image('base-vertical-270-480.png') 0.25x,
+              image('base-vertical-540-960.png') 0.5x,
+              image('base-vertical-1080-1920.png') 1x,
+              image('base-vertical-2160-3840.png') 2x,
+              image('base-vertical.png') 4x
+            );
+        }
+    }
+}
+

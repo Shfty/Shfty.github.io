@@ -1,23 +1,66 @@
-* Recursive categories
-  * Generate path metadata for all pages under a given path
-    * Path metadata is like category metadata,
-      but without pruning off the start of the path
-  * Special-case index.md files to represent their parent
-    directory's category instead of acting as a member of it
-  * Use per-page path metadata to generate breadcrumb trails
-  * Use per-category path metadata to generate list pages
-  * Use whole-site path metadata to generate sidebar menu
-    with category pages acting as <detail> elements
+* Use whole-site path metadata to generate sidebar menu
+  with <detail> elements for category pages
+  * Now have a tree hierarchy of indices and their children
+  * Can map identifiers, titles, etc over the tree to generate
+    nested menu content
+  * Should be able to invert the tree to generate breadcrumb data
+  * Need to investigate making the tree first-class,
+    using it to compile categories and pages within
+    the appropriate context
+    * Very likely that there are typeclasses existing functionality
+      can be lifted into to streamline and generalize the whole process
 
-* Generalize sidebar / navigation panels under a single reusable component
-  * Fixed-width header / footer + arbitrary content
+* Fixup URLs in parentRoute
+  * Currently breaking images, which lack the pages/ prefix
 
-* Integrate hakyll-images to generate resized copies of background images,
-  serve conditionally via media queries
+* Generalize compiler / template metadata fields and integrate
+  with recursive page compiler
+
+* Metadata-driven context provision
+  * Pages should be able to request certain context elements
+    (ex. child pages, child posts, date, etc.)
+    in order to drive their requested set of templates
+  * Will likely need to invent some basic query syntax
+    so pages can request a specific subset of the site's posts
+
+* Support arbitrary extensions for pages in recursive hierarchy
+  * Currently hardcoded to .md, should be an open set
+
+* Move title element into a proper template
+  * Pages should be free to elide it and provide their own
+by  * ex. Home page should be able to elide the home glyph and ~
+    in favour of "Home" or similar
+
+* Investigate compile-time configuration
+  * Useful for development / release profiles that can filter out content
+    based on some tag or arbitrary metadata element
+  * Does the hakyllWith function provide means to handle command line arguments?
+    * If not, can parse a config file similar to the pandoc highlight JSON
 
 * File type metadata
-  * Should provide the means to look up a name and icon
+  * Should provide the means to look up a name and glyph
     for purposes of sidebar menu and header readout
+    * Filetype should provide a default glyph that can be overridden
+      via a separate 'glyph' metadata field
+
+* Clean URLs
+  * Should be eliding index.html, stripping extensions,
+    possibly performing some filename transform for consistency
+  * The Hakyll site should have a tutorial on this
+
+* Support for regular tags
+  * Apply recursive categories as regular category tags
+  * Extend with arbitrary set of metadata-defined tags
+  * Generate free-standing index pages for each regular tag
+
+* Generalize sidebar / navigation panels under a single reusable component
+  * Fixed-width header + arbitrary content
+  * Should be able to use templating for this
+    * Build navigation content and header HTML,
+      then substitute into the appropriate template
+
+* Code structure pass
+  * Need to structure, generalize, and possibly organize into modules
 
 * Current page highlight for sidebar
   * Should be able to style the link representing the active page
@@ -26,12 +69,23 @@
   * Likely won't be able to do global state
     without introducing cookies or HTML5 local storage
   * Ergo, the next-nicest approach is to expand all directories
-    above the current category, and leave the rest closed
+    above the current file, and leave the rest closed
 
 * Table of Contents support for markdown articles
-  * Display in a right-side panel on sufficiently wide screens
+  * Figure out a way to collect header jump links ahead of time
+  * Parse into an HTML navigation section,
+    display in a right-side panel on sufficiently wide screens
+    * Can probably inline into main content on narrow devices
 
-* Prevent divider from shrinking horizontally on narrow screens
+* Formalize navigation panel on narrow screens
+  * How to integrate nicely with a vertical layout?
+    * Pop-over element?
+    * Inline at top of main content?
+
+* Fix background image behaviour with cover scaling
+  * Need to query against the aspect ratio of the image,
+    adjust scaling behaviour accordingly
+  * Is there some more abstract media query to determine pixel density?
 
 * JavaScript-driven scroll position indicator
   * Update main header to show percentage whenever scroll position changes

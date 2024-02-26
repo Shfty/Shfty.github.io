@@ -93,35 +93,11 @@
     background-color: var(--color-yellow)
 }
 
-html {
-    background-size: cover;
-    background-position: center;
-}
-
-@media (aspect-ratio: 1) {
-    html {
-        background-image: image("base.png");
-    }
-}
-
-@media (min-aspect-ratio: 1) {
-    html {
-        background-image: image("base.png");
-    }
-}
-
-@media (max-aspect-ratio: 1) {
-    html {
-        background-image: image("base-vertical.png");
-    }
-}
-
 body {
     color: var(--color-fg);
 }
 
 footer {
-    color: var(--color-comment);
     background-color: var(--color-line);
 }
 
@@ -155,7 +131,6 @@ footer {
 
 nav a {
     color: var(--color-fg);
-    text-decoration: none;
 }
 
 /* unvisited link */
