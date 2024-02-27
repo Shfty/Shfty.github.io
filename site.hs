@@ -1,4 +1,6 @@
+{-# LANGUAGE DeriveTraversable #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TupleSections #-}
 
 import Control.Exception (try)
 import Control.Monad
@@ -8,6 +10,7 @@ import qualified Data.Aeson as JSON
 import Data.Bifunctor (second)
 import qualified Data.ByteString.Lazy as ByteString
 import Data.Foldable (traverse_)
+import Data.Functor.Identity
 import Data.List
 import Data.List.Utils (replace)
 import Data.Maybe
@@ -137,8 +140,8 @@ applyFlexColumn = applyTernaryTemplate flexColumnTemplate
 applyFlexRow = applyTernaryTemplate flexRowTemplate
 
 applyDefaultTemplate ctx = do
-    let header = loadAndApplyTemplate headerTemplate ctx >=> (return . itemBody)
-    let footer = loadAndApplyTemplate footerTemplate ctx >=> (return . itemBody)
+    let header = loadAndApplyTemplate headerTemplate ctx >=> return . itemBody
+    let footer = loadAndApplyTemplate footerTemplate ctx >=> return . itemBody
 
     let panel ctx =
             loadAndApplyTemplate flexScrollTemplate ctx
@@ -146,11 +149,11 @@ applyDefaultTemplate ctx = do
 
     let sidebar =
             const $
-                makeItem ""
-                    >>= (panel ctx >=> (return . itemBody))
+                load "menu.html"
+                    >>= (panel ctx >=> return . itemBody)
     return
         >=> panel ctx
-        >=> applyFlexRow Nothing (Just sidebar) ctx
+        >=> applyFlexRow (Just sidebar) Nothing ctx
         >=> applyFlexColumn Nothing (Just footer) ctx
         >=> loadAndApplyTemplate htmlTemplate ctx
 
@@ -323,6 +326,48 @@ main = do
         let recursiveCategoriesPattern = recursivePattern .&&. indexPattern
         let recursivePagesPattern = recursivePattern .&&. notIndexPattern
 
+        -- Assemble testing menu
+        fileTree <- makeFileTree "pages/**"
+
+        create ["menu.html"] $ do
+            compile $ do
+                let isIndex = (== "index") . takeBaseName
+
+                let fileTree' = do
+                        let fileTree'' = ("",) <$> fileTree
+
+                        let go a = case a of
+                                Branch (acc, a) as -> do
+                                    let a' = (acc </>) <$> a
+                                    let a'' = unNode a'
+                                    let as' = fmap (runIdentity . go . fmap (\(_, b) -> (a'', b))) as
+                                    Identity $ Branch a' as'
+                                Leaf (acc, a) -> Identity $ Leaf ((acc </>) <$> a)
+
+                        runIdentity $ runIdentity $ traverse go (Identity fileTree'')
+
+                let fileTree'' = filterFileTree (not . isIndex . unNode) fileTree'
+
+                let indexCategories a = case a of
+                        Category a -> Category (a </> "index.md")
+                        Page a -> Page a
+
+                let fileTree''' = indexCategories <$> fileTree''
+
+                mt <- menuTree fileTree'''
+
+                let foldDetails t =
+                        case t of
+                            (Branch a as) ->
+                                H.details H.! A.open "" $
+                                    H.toHtml a <> mconcat (foldDetails <$> as)
+                            (Leaf b) -> H.toHtml b
+
+                let html = renderHtml $ foldDetails mt
+
+                makeItem html
+
+        -- Build page breadcrumb data, compiler
         breadcrumbs <- buildTagsWith getBreadcrumb recursivePagesPattern $ fromCapture "*/index.md"
         -- error $ showTags breadcrumbs
 
@@ -335,11 +380,21 @@ main = do
                         then [takeDirectory page]
                         else [page]
 
-        catCats <- buildTagsWith getCategory' recursivePattern $ fromCapture "*/index.md"
-        -- error $ showTags catCats
-
         let pageCtx = breadcrumbField "breadcrumb" breadcrumbs `mappend` defaultContext
         -- recursivePages recursivePagesPattern pandocCompiler' (pageCtx <> defaultContext)
+
+        let recursivePageCompiler ident = do
+                meta <- getMetadataField ident "template"
+                debugCompiler $ "TEMPLATE META: " ++ show meta
+
+                pandocCompiler'
+                    >>= loadAndApplyTemplate postTemplate pageCtx
+                    >>= applyDefaultTemplate pageCtx
+                    >>= relativizeUrls
+
+        -- Build category structural data, compiler
+        catCats <- buildTagsWith getCategory' recursivePattern $ fromCapture "*/index.md"
+        -- error $ showTags catCats
 
         let categoryCtx = breadcrumbFieldWith (getBreadcrumbWith pop) "breadcrumb" breadcrumbs
 
@@ -362,29 +417,19 @@ main = do
                         Nothing -> applyCategoryTemplate
                         Just a -> do
                             let templates = fromText <$> (strip <$> splitOn "," (fromString a)) :: [String]
-                            concatM $
-                                map
-                                    ( \a -> case a of
-                                        "None" -> return
-                                        "Self" -> applyAsTemplate indexCtx
-                                        "Default" -> applyCategoryTemplate
-                                        a -> loadAndApplyTemplate (fromFilePath a) indexCtx
-                                    )
-                                    templates
+
+                            let go a = case a of
+                                    "None" -> return
+                                    "Self" -> applyAsTemplate indexCtx
+                                    "Default" -> applyCategoryTemplate
+                                    a -> loadAndApplyTemplate (fromFilePath a) indexCtx
+
+                            concatM $ map go templates
                 -- Just a -> loadAndApplyTemplate (fromFilePath a) indexCtx
 
                 compiler
                     >>= applyTemplates
                     >>= applyCategoryTemplate
-                    >>= relativizeUrls
-
-        let recursivePageCompiler ident = do
-                meta <- getMetadataField ident "template"
-                debugCompiler $ "TEMPLATE META: " ++ show meta
-
-                pandocCompiler'
-                    >>= loadAndApplyTemplate postTemplate pageCtx
-                    >>= applyDefaultTemplate pageCtx
                     >>= relativizeUrls
 
         -- Compile categories and their child pages based on generated structural data
@@ -410,43 +455,29 @@ main = do
                 ident <- getUnderlying
                 recursiveCategoryCompilier ident ""
 
-        create ["menu.html"] $ do
-            route idRoute
-            compile $ do
-                let items = loadAll (fromGlob "pages/**") :: Compiler [Item String]
-                fs <- do
-                    items
-                        >>= (\a -> return $ makeFS . splitDirectories . toFilePath . itemIdentifier <$> a) ::
-                        Compiler [FS FilePath FilePath]
-
-                let [fs'] = foldl' concatFS [] (return <$> fs)
-                let fs'' = sortFS fs'
-
-                let isIndex = (== "index") . takeBaseName
-
-                let pages' = filterFS (not . isIndex) fs''
-                let indices' = filterFS isIndex fs''
-                let paths' = foldFS (</>) "" fs''
-                let paths'' =
-                        mapFS' (</> "index.md") $
-                            foldFS' (</>) mempty $
-                                filterFS (not . isIndex) $
-                                    foldFS (</>) mempty fs''
-
-                menu <- renderMenu paths''
-                makeItem (renderHtml menu)
-                    >>= applyDefaultTemplate defaultContext
-
         templates
 
-data FS a b = Branch !a ![FS a b] | Leaf !b deriving (Eq, Ord)
+data Node a = Category !a | Page !a deriving (Eq, Ord, Show, Functor, Foldable, Traversable)
 
-instance (Show a, Show b) => Show (FS a b) where
+unNode (Category a) = a
+unNode (Page a) = a
+
+instance Applicative Node where
+    pure = Page
+    a <*> b = a >>= (<$> b)
+
+instance Monad Node where
+    Category a >>= f = f a
+    Page a >>= f = f a
+
+data FileTree a = Branch !a ![FileTree a] | Leaf !a deriving (Eq, Ord, Functor, Foldable, Traversable)
+
+instance (Show a) => Show (FileTree a) where
     show (Branch a as) = replace "\n" "\n\t" $ show a ++ ":\n" ++ mconcat ((++ "\n") . show <$> as)
     show (Leaf b) = show b
 
-renderMenu :: FS FilePath FilePath -> Compiler H.Html
-renderMenu fs = do
+menuTree :: FileTree (Node FilePath) -> Compiler (FileTree H.Html)
+menuTree = do
     let href path = A.href $ H.toValue path
 
     let getInfo a = do
@@ -455,59 +486,58 @@ renderMenu fs = do
             route <- fromMaybe (fail "No route") <$> getRoute id
             return (title, route)
 
-    case fs of
-        (Branch a as) -> do
-            (title, route) <- getInfo a
-            items <- mapM renderMenu as
-            return $
-                H.details H.! A.open "" $
+    let go a = case a of
+            (Category a) -> do
+                (title, route) <- getInfo a
+                return $
                     H.summary (H.a H.! href route $ H.toHtml title)
-                        <> mconcat items
-        (Leaf b) -> do
-            (title, route) <- getInfo b
-            return $
-                H.a H.! href route $
-                    H.toHtml title
+            (Page b) -> do
+                (title, route) <- getInfo b
+                return $
+                    H.a H.! href route $
+                        H.toHtml title
+
+    traverse go
 
 -- Create a chain of branches from a list
-makeFS :: [a] -> FS a a
-makeFS [x] = Leaf x
-makeFS (x : xs) = Branch x [makeFS xs]
+makePath [x] = Leaf (Page x)
+makePath (x : xs) = Branch (Category x) [makePath xs]
+
+makePaths items =
+    makePath . splitDirectories . toFilePath <$> items
+
+makeFileTree pat = do
+    items <- getMatches pat
+    let paths = makePaths items
+    let [fs] = foldl' concatFileTree [] (return <$> paths)
+    return $ sortFileTree fs
 
 -- Recursively merge chains created by makeFS into a single tree
-concatFS :: (Ord a, Ord b) => [FS a b] -> [FS a b] -> [FS a b]
-concatFS [Branch a as] [Branch b bs] =
-    let go = foldr (concatFS . (: [])) []
+concatFileTree :: (Ord a) => [FileTree a] -> [FileTree a] -> [FileTree a]
+concatFileTree [Branch a as] [Branch b bs] =
+    let go = foldr (concatFileTree . (: [])) []
      in if a == b
             then [Branch a $ go (as <> bs)]
             else [Branch a $ go as, Branch b $ go bs]
-concatFS a b = a <> b
+concatFileTree a b = a <> b
 
 -- Recursive sort
-sortFS (Branch x xs) = Branch x $ sort (sortFS <$> xs)
-sortFS a = a
+sortFileTree (Branch x xs) = Branch x $ sort (sortFileTree <$> xs)
+sortFileTree a = a
 
 -- Filter leaves by their value
-filterFS f a = do
+filterFileTree f a = do
     let go (Branch x xs) = [Branch x $ mconcat $ go <$> xs]
         go (Leaf a) = ([Leaf a | f a])
     let [indices] = go a
     indices
 
 -- Accumulate branch values, and fold over leaf values
-foldFS f acc (Branch a xs) = Branch a $ foldFS f (f acc a) <$> xs
-foldFS f acc (Leaf b) = Leaf $ f acc b
+foldFileTree f acc (Branch a xs) = Branch a $ foldFileTree f (f acc a) <$> xs
+foldFileTree f acc (Leaf b) = Leaf $ f acc b
 
 -- Accumulate and fold over branch values
-foldFS' f acc (Branch a xs) = do
+foldFileTree' f acc (Branch a xs) = do
     let a' = f acc a
-    Branch a' $ foldFS' f a' <$> xs
-foldFS' f acc (Leaf b) = Leaf b
-
--- Map over leaf values
-mapFS f (Branch a xs) = Branch a $ mapFS f <$> xs
-mapFS f (Leaf b) = Leaf $ f b
-
--- Map over branch values
-mapFS' f (Branch a xs) = Branch (f a) $ mapFS' f <$> xs
-mapFS' f (Leaf b) = Leaf b
+    Branch a' $ foldFileTree' f a' <$> xs
+foldFileTree' f acc (Leaf b) = Leaf b
