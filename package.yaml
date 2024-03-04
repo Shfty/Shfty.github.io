@@ -1,0 +1,34 @@
+version: 0.1
+executables:
+  site:
+    main: Main.hs
+    source-dirs:
+      - src
+    other-modules:
+      - Data.FileTree
+      - Hakyll.Compiler.Overridable
+      - Hakyll.Breadcrumb
+      - Hakyll.Highlighting
+      - Hakyll.Layout
+      - Hakyll.Sass
+      - Hakyll.Tags
+      - Hakyll.Wallpaper
+
+dependencies:
+  - base
+  - containers
+  - hakyll
+  - hakyll-sass
+  - hakyll-images
+  - pandoc
+  - aeson
+  - bytestring
+  - filepath
+  - blaze-html
+  - blaze-markup
+  - text
+  - text-conversions
+  - monad-loops
+  - MissingH
+  - transformers
+  - mtl

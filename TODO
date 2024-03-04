@@ -1,35 +1,40 @@
-* Use whole-site path metadata to generate sidebar menu
-  with <detail> elements for category pages
-  * Now have a tree hierarchy of indices and their children
-  * Can map identifiers, titles, etc over the tree to generate
-    nested menu content
-  * Should be able to invert the tree to generate breadcrumb data
-  * Need to investigate making the tree first-class,
-    using it to compile categories and pages within
-    the appropriate context
-    * Very likely that there are typeclasses existing functionality
-      can be lifted into to streamline and generalize the whole process
-
-* Fixup URLs in parentRoute
-  * Currently breaking images, which lack the pages/ prefix
-
-* Generalize compiler / template metadata fields and integrate
-  with recursive page compiler
+* Refactor compiler overrides with YAML metadata handling
+  * Can use YAML arrays directly for compilers, templates
 
 * Metadata-driven context provision
   * Pages should be able to request certain context elements
     (ex. child pages, child posts, date, etc.)
     in order to drive their requested set of templates
-  * Will likely need to invent some basic query syntax
-    so pages can request a specific subset of the site's posts
+  * Can use YAML metadata to define queries and their mappings
+    to context fields
+  * Potential uses:
+    * Breadcrumb list (part of default context)
+    * Named lists of page content
+      * Child pages (part of default context)
+      * Arbitrary lists of page content
+        * Via pattern
+        * Via tag
+
+* Generate breadcrumb data from metaTree
+
+* Formalize menu entries and header templating
+  * Both of these can be thought of as variants of their source page,
+    and can be generated independently of other content
+    * Ergo, render them out as versions using a domain-specific compiler,
+      so they can be pulled into sidebars, headers, etc. fully formed
+    * Should be able to set it up such that pages can specify
+      their header template/s via metadata
+
+* Fixup URLs in parentRoute
+  * Currently breaking images, which lack the pages/ prefix
 
 * Support arbitrary extensions for pages in recursive hierarchy
   * Currently hardcoded to .md, should be an open set
 
 * Move title element into a proper template
   * Pages should be free to elide it and provide their own
-by  * ex. Home page should be able to elide the home glyph and ~
-    in favour of "Home" or similar
+    * ex. Home page should be able to elide the home glyph and ~
+      in favour of "Home" or similar
 
 * Investigate compile-time configuration
   * Useful for development / release profiles that can filter out content
@@ -59,13 +64,10 @@ by  * ex. Home page should be able to elide the home glyph and ~
     * Build navigation content and header HTML,
       then substitute into the appropriate template
 
-* Code structure pass
-  * Need to structure, generalize, and possibly organize into modules
-
 * Current page highlight for sidebar
   * Should be able to style the link representing the active page
 
-* Intelligent open / close for sidebar
+* Contextual folding for sidebar
   * Likely won't be able to do global state
     without introducing cookies or HTML5 local storage
   * Ergo, the next-nicest approach is to expand all directories

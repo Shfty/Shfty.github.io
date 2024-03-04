@@ -34,4 +34,12 @@ published: 2024-02-13
   * TODO
 
 ### Navigation Panel
-  * TODO
+  * Opted to overhaul structure to render a <details>-based nested navigation panel;
+    the generated data is a tree, and the problem is ostensibly modeled on a tree,
+    so using an actual tree - while remaining friendly to Hakyll - is an elegant solution
+    * Emulating via tags is nice, but felt like it was being stretched too far.
+
+### Metadata-based overrides
+  * Likely deserves its own article
+  * System for page metadata to override compilers, templates, and context fields
+    via YAML syntax.

@@ -1,5 +1,6 @@
 ---
-title:  ~
+icon: 
+title: '~'
 templates: Self
 ---
 

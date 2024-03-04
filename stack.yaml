@@ -1,6 +1,8 @@
 resolver: lts-21.25
+
 packages:
   - .
+
 extra-deps:
   - hakyll-4.16.2.0
   - hakyll-sass-0.2.4
