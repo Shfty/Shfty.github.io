@@ -14,5 +14,6 @@ Role: Junior Programmer; UI/UX, Gameplay, VFX.
 
 ![Trailer](https://cdn.cloudflare.steamstatic.com/steam/apps/256748708/movie_max.webm)
 
-![Developer site](https://www.aurochdigital.com/darkfuturevideogame/)
-![Steam page](https://store.steampowered.com/app/370870/Dark_Future_Blood_Red_States/)
+[Developer site](https://www.aurochdigital.com/darkfuturevideogame/)
+
+[Steam page](https://store.steampowered.com/app/370870/Dark_Future_Blood_Red_States/)

@@ -15,12 +15,14 @@ executable site
       Hakyll.Compiler.Overridable
       Hakyll.Breadcrumb
       Hakyll.Highlighting
+      Hakyll.Glyphs
       Hakyll.Layout
       Hakyll.Sass
       Hakyll.Tags
       Hakyll.Wallpaper
   hs-source-dirs:
       src
+  ghc-options: -threaded
   build-depends:
       MissingH
     , aeson

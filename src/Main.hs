@@ -22,6 +22,8 @@ import Text.Pandoc.Highlighting
 
 import qualified Data.Aeson as JSON
 import qualified Data.ByteString.Lazy as ByteString
+import qualified Data.Map
+import Data.Maybe
 import Hakyll.Commands (watch)
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
@@ -40,12 +42,18 @@ imagePattern = imagesPattern .&&. notWallpaperPattern
 
 staticAssetPattern =
     imagePattern
-        .||. "posts/**.png"
-        .||. "posts/**.jpeg"
-        .||. "posts/**.gif"
-        .||. "posts/**.mkv"
+        .||. "images/**.png"
+        .||. "images/**.jpeg"
+        .||. "images/**.gif"
+        .||. "images/**.mkv"
         .||. "fonts/**.woff"
         .||. "fonts/**.woff2"
+
+pageAssetPattern =
+    "pages/**/*.png"
+        .||. "pages/**/*.jpg"
+        .||. "pages/**/*.gif"
+        .||. "pages/**/*.mkv"
 
 metadataPattern = "**/*.metadata"
 imageAssetPattern = "**/*.png" .||. "**/*.jpg" .||. "**/*.gif"
@@ -63,6 +71,7 @@ recursivePagesPattern = recursivePattern .&&. notIndexPattern
 htmlTemplate = "templates/html.html"
 footerTemplate = "templates/footer.html"
 headerTemplate = "templates/content/header.html"
+slugTemplate = "templates/slug.html"
 flexColumnTemplate = "templates/flex-column.html"
 flexRowTemplate = "templates/flex-row.html"
 flexScrollTemplate = "templates/flex-scroll.html"
@@ -74,6 +83,11 @@ cssTemplate = "css/*.scss"
 
 highlightStyleDefault = breezeDark
 highlightStyleJson = "style.json"
+
+versionHeader = "header"
+versionSlug = "slug"
+versionMenu = "menu"
+versionBody = "body"
 
 --------------------------------------------------------------------------------
 -- Business logic
@@ -89,33 +103,40 @@ applyFlexColumn = applyTernaryTemplate flexColumnTemplate
 applyFlexRow = applyTernaryTemplate flexRowTemplate
 
 applyLayoutTemplate :: FileTree (Identifier, Metadata) -> Context String -> Item String -> Compiler (Item String)
-applyLayoutTemplate metaTree ctx = do
-    let header = loadAndApplyTemplate headerTemplate ctx >=> return . itemBody
-    let footer = loadAndApplyTemplate footerTemplate ctx >=> return . itemBody
+applyLayoutTemplate metaTree ctx item = do
+    let ident = itemIdentifier item
 
-    let mt =
-            menuTree metaTree
-                >>= makeItem . renderHtml . foldDetails
+    let identHeader = setVersion (Just versionHeader) ident
+    header <- loadBody identHeader :: Compiler String
+
+    let identBody = setVersion (Just versionBody) ident
+    body <- load identBody :: Compiler (Item String)
+
+    let identMenu = setVersion (Just versionMenu) ident
+    menu <- load identMenu :: Compiler (Item String)
+
+    footer <- loadBody "footer.html"
 
     let panel header footer ctx =
             loadAndApplyTemplate flexScrollTemplate ctx
                 >=> applyFlexColumn header footer ctx
 
-    let sidebar =
-            const $
-                mt
-                    >>= (panel (Just header) Nothing ctx >=> return . itemBody)
-    let out =
-            panel (Just header) Nothing ctx
-                >=> applyFlexRow (Just sidebar) Nothing ctx
-                >=> applyFlexColumn Nothing (Just footer) ctx
-                >=> loadAndApplyTemplate htmlTemplate ctx
+    body' <- panel (Just header) Nothing ctx body
+    menu' <- panel (Just header) Nothing ctx menu
 
-    out
+    makeItem (itemBody body')
+        >>= applyFlexRow (Just (itemBody menu')) Nothing ctx
+        >>= applyFlexColumn Nothing (Just footer) ctx
+        >>= loadAndApplyTemplate htmlTemplate ctx
 
 -- Static assets (images, fonts, etc.)
 staticAssets = match staticAssetPattern $ do
     route idRoute
+    compile copyFileCompiler
+
+-- Colocated page assets
+pageAssets = match pageAssetPattern $ do
+    route parentRoute
     compile copyFileCompiler
 
 -- Post Context
@@ -162,14 +183,15 @@ main = do
         pandocStyle <- tryLoadStyle highlightStyleDefault highlightStyleJson
         let pandocCompiler' = pandocCompilerWithStyle pandocStyle
 
-        wallpapers landscapeWallpaperPattern portraitWallpaperPattern
+        -- wallpapers landscapeWallpaperPattern portraitWallpaperPattern
 
         staticAssets
+        pageAssets
 
         sassHandling pandocStyle cssTemplate
 
         -- Create tree structure
-        fileTree <- makeFileTree "pages/**"
+        fileTree <- makeFileTree ("pages/**/*.md" .||. "pages/**/*.html")
         -- error $ show fileTree
         let identTree = makeIdentTree fileTree
         -- error $ show identTree
@@ -186,53 +208,79 @@ main = do
                     `mappend` breadcrumbFieldWith (getBreadcrumbWith pop) "breadcrumb" breadcrumbs
                     `mappend` defaultContext
 
+        let routes a = case a of
+                Branch a as -> [a] <> concatMap routes as
+                Leaf a -> [a | matches ("**/*.md" .||. "**/*.html") a]
+
         let pages a = case a of
                 Branch a as -> concatMap pages as
                 Leaf a -> [a | matches ("**/*.md" .||. "**/*.html") a]
 
-        let children a = case a of
-                Branch a as -> [a]
-                Leaf a -> [a]
+        let categories a = do
+                let children a = case a of
+                        Branch a as -> [a]
+                        Leaf a -> [a]
 
-        let categories a = case a of
-                Branch a as -> [(a, concatMap children as)] <> concatMap categories as
-                Leaf a -> []
+                case a of
+                    Branch a as -> [(a, concatMap children as)] <> concatMap categories as
+                    Leaf a -> []
 
-        let pageDefaults = CompilerDefaults pandocCompiler' pageCtx postTemplate
-        let pageProvider =
-                providers pageDefaults
+        -- Compile footer
+        match "footer.html" $ compile getResourceBody
+
+        -- Compile headers, menus
+        match (fromList $ routes identTree) $ do
+            version versionSlug $ do
+                compile $ do
+                    makeItem "" >>= loadAndApplyTemplate slugTemplate pageCtx
+
+            version versionMenu $ do
+                compile $ do
+                    menuTree metaTree
+                        >>= makeItem . renderHtml . H.nav . foldDetails
+
+            version versionHeader $ do
+                compile $ do
+                    makeItem "" >>= loadAndApplyTemplate headerTemplate pageCtx
+
+            route recursiveRoute
+            compile $
+                makeItem ""
+                    >>= applyLayoutTemplate metaTree pageCtx
+                    >>= relativizeUrls
+
+        --- Specialized compilers
+        let providers = defaultProviders
                     & withCompiler "None" getResourceBody
                     & withCompiler "Default" pandocCompiler'
                     & withCompiler "pandoc" pandocCompiler'
                     & withContext "None" defaultContext
 
-        let recursivePageCompiler ident = do
-                overridableCompiler pageProvider ident
-                    >>= applyLayoutTemplate metaTree pageCtx
-                    >>= relativizeUrls
+        let spec a b c = CompilerSpec providers $ CompilerDefaults a b c
 
-        mapM_
-            ( \a -> do
-                match (fromList [a]) $ do
-                    route recursiveRoute
-                    compile $ recursivePageCompiler a
-            )
-            (pages identTree)
+        let categories' = Data.Map.fromList $ categories identTree
 
-        let recursiveCategoryCompiler postPat ident = do
-                let catDefaults = CompilerDefaults pandocCompiler' (categoryCtx postPat) categoryTemplate
-                let catProvider = pageProvider & mapDefaults (const catDefaults)
+        -- Compile pages
+        let pageSpec = spec pandocCompiler' pageCtx postTemplate
+        
+        match (fromList $ pages identTree) $ do
+            version versionBody $ do
+                compile $
+                    overridableCompiler pageSpec
 
-                overridableCompiler catProvider ident
-                    >>= applyLayoutTemplate metaTree pageCtx
-                    >>= relativizeUrls
+        -- Compile categories
+        let bodyCompiler = do
+                ident <- getUnderlying
+                let ident' = setVersion Nothing ident
+                let pat = fromList $ fromMaybe mempty $ Data.Map.lookup ident' categories'
 
-        mapM_
-            ( \(a, b) -> do
-                match (fromList [a]) $ do
-                    route recursiveRoute
-                    compile $ recursiveCategoryCompiler (fromList b) a
-            )
-            (categories identTree)
+                let catDefaults = CompilerDefaults 
+                let catSpec = spec pandocCompiler' (categoryCtx pat) categoryTemplate
+
+                overridableCompiler catSpec
+
+        match (fromList $ Data.Map.keys categories') $ do
+            version versionBody $ do
+                compile bodyCompiler
 
         templates

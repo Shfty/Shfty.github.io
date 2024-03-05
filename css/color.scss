@@ -129,22 +129,26 @@ footer {
   border-color: var(--color-fg);
 }
 
-details a {
+nav details a {
     color: var(--color-fg);
 }
 
+nav details x-glyph[type="custom-folder"] {
+    color: var(--color-purple);
+}
+
 /* unvisited link */
-details a:link, details a:visited {
+nav details a:link, details a:visited {
     color: var(--color-fg);
 }
 
 /* mouse over link */
-details a:hover {
+nav details a:hover {
     background-color: var(--color-line);
 }
 
 /* selected link */
-details a:active {
+nav details a:active {
     background-color: var(--color-fg);
     color: var(--color-bg);
 }

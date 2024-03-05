@@ -12,6 +12,10 @@ import Control.Monad.State
 import System.FilePath
 
 import Hakyll
+import Hakyll.Glyphs
+
+import Text.Blaze.Html.Renderer.String
+
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 
@@ -33,24 +37,15 @@ instance Applicative FileTree where
 
 menuTree :: FileTree (Identifier, Metadata) -> Compiler (FileTree H.Html)
 menuTree a = do
-    let href path = A.href $ H.toValue path
-    let getInfo (id, meta) = do
-            let icon = lookupString "icon" meta
-            let title = fromMaybe (toFilePath id) $ lookupString "title" meta
-            route <- fromMaybe (fail "No route") <$> getRoute id
-            return (icon, title, "/" ++ route)
     case a of
-        (Branch a as) -> do
-            (icon, title, route) <- getInfo a
-            let icon' = fromMaybe "\58879" icon
-            let html = H.summary (H.a H.! href route $ H.pre $ H.toHtml $ mconcat [icon', " ", title])
+        (Branch (id, meta) as) -> do
+            slug <- loadBody $ setVersion (Just "slug") id :: Compiler String
+            let html = H.summary $ H.preEscapedString slug
             as' <- mapM menuTree as
-            return $ Branch html as'
-        (Leaf b) -> do
-            (icon, title, route) <- getInfo b
-            let icon' = fromMaybe "\983572" icon
-            let html = H.a H.! href route $ H.pre $ H.toHtml $ mconcat ["  ", icon', " ", title]
-            return $ Leaf html
+            mapM menuTree as >>= return . Branch html
+        (Leaf (id, meta)) -> do
+            slug <- loadBody $ setVersion (Just "slug") id :: Compiler String
+            return $ Leaf $ H.preEscapedString slug
 
 tag :: FileTree FilePath -> FileTree (FilePath, FilePath)
 tag tree = evalState (tagStep tree) mempty

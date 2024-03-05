@@ -7,6 +7,7 @@ import Data.Maybe
 
 import Hakyll
 import Hakyll.Tags
+import Hakyll.Glyphs
 
 import Text.Blaze.Internal (customLeaf, customAttribute)
 
@@ -14,14 +15,6 @@ import System.FilePath
 
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
-
--- Custom HTML tags
-glyphTag = H.stringTag "x-glyph"
-glyph = customLeaf glyphTag True
-glyphTy = customAttribute "type"
-
-leftSoftDivider = glyph H.! glyphTy "left-soft-divider"
-preSpace = H.pre " "
 
 inits' = filter (not . null) . inits
 

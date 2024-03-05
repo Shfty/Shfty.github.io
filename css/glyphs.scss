@@ -7,6 +7,7 @@
   --glyph-language-markdown: " ";
   --glyph-branch: "";
   --glyph-custom-folder: " ";
+  --glyph-file: "󰈔 ";
   --glyph-chevron-right: " ";
   --glyph-chevron-down: " ";
   --glyph-home: " ";
@@ -54,4 +55,8 @@ x-glyph[type="chevron-down"]::before {
 
 x-glyph[type="home"]::before {
     content: var(--glyph-home)
+}
+
+x-glyph[type="file"]::before {
+    content: var(--glyph-file)
 }

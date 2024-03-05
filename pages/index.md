@@ -1,7 +1,8 @@
 ---
-icon: 
+icon: home
 title: '~'
-templates: Self
+templates:
+    - Self
 ---
 
 ## Welcome

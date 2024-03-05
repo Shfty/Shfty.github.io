@@ -18,20 +18,20 @@ details {
     font-family: var(--code-font)
 }
 
-details > :not(summary) {
+nav details > :not(summary) {
     margin-left: 2ch;
     display: block;
 }
 
-summary {
+nav summary {
     list-style-type: None;
 }
 
-details[open] > summary::before {
+nav details[open] > summary::before {
     content: var(--glyph-chevron-down);
 }
 
-details:not(details[open]) > summary::before {
+nav details:not(details[open]) > summary::before {
     content: var(--glyph-chevron-right);
 }
 
@@ -115,10 +115,6 @@ nav-file::before {
 
 header {
     height: 1.3rem;
-}
-
-nav {
-    flex: auto;
 }
 
 main {

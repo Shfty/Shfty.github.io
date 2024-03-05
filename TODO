@@ -1,21 +1,4 @@
-* Refactor compiler overrides with YAML metadata handling
-  * Can use YAML arrays directly for compilers, templates
-
-* Metadata-driven context provision
-  * Pages should be able to request certain context elements
-    (ex. child pages, child posts, date, etc.)
-    in order to drive their requested set of templates
-  * Can use YAML metadata to define queries and their mappings
-    to context fields
-  * Potential uses:
-    * Breadcrumb list (part of default context)
-    * Named lists of page content
-      * Child pages (part of default context)
-      * Arbitrary lists of page content
-        * Via pattern
-        * Via tag
-
-* Generate breadcrumb data from metaTree
+* >>= getResourceBody Generate breadcrumb data from metaTree
 
 * Formalize menu entries and header templating
   * Both of these can be thought of as variants of their source page,
@@ -24,9 +7,6 @@
       so they can be pulled into sidebars, headers, etc. fully formed
     * Should be able to set it up such that pages can specify
       their header template/s via metadata
-
-* Fixup URLs in parentRoute
-  * Currently breaking images, which lack the pages/ prefix
 
 * Support arbitrary extensions for pages in recursive hierarchy
   * Currently hardcoded to .md, should be an open set

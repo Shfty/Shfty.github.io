@@ -2,6 +2,7 @@ version: 0.1
 executables:
   site:
     main: Main.hs
+    ghc-options: [-threaded]
     source-dirs:
       - src
     other-modules:
@@ -9,6 +10,7 @@ executables:
       - Hakyll.Compiler.Overridable
       - Hakyll.Breadcrumb
       - Hakyll.Highlighting
+      - Hakyll.Glyphs
       - Hakyll.Layout
       - Hakyll.Sass
       - Hakyll.Tags
