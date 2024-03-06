@@ -1,5 +1,6 @@
 ---
 title: Game Prototypes
+icon: gamepad
 ---
 # Game Prototypes
 

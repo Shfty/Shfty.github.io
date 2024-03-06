@@ -1,5 +1,6 @@
 ---
 title: Academic
+icon: mortar-board
 ---
 # Academic
 

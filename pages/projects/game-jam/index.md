@@ -1,5 +1,6 @@
 ---
 title: Game Jam
+icon: gamepad-square
 ---
 # Game Jam
 

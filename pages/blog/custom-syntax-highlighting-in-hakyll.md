@@ -1,6 +1,7 @@
 ---
 title: Custom Syntax Highlighting in Hakyll
 author: Josh ρ
+icon: haskell
 published: 2024-02-13
 ---
 

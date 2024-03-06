@@ -1,6 +1,7 @@
 ---
 title: Store
 git: shfty-rust/store
+icon: rust
 published: 2024-02-08
 ---
 

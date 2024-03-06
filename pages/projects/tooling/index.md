@@ -1,5 +1,6 @@
 ---
 title: Tooling
+icon: tools
 ---
 # Tooling
 

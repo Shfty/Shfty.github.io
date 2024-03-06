@@ -2,6 +2,7 @@
 title: Bevy Rust-GPU
 git: bevy-rust-gpu
 published: 2024-02-08
+icon: bevy
 ---
 
 A suite of tools for integrating the Rust-GPU ecosystem with Bevy 0.10.

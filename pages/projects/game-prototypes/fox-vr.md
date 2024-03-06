@@ -1,6 +1,7 @@
 ---
 title: Fox VR
 git: shfty-unreal/FoxVR
+icon: unreal
 published: 2024-02-08
 ---
 

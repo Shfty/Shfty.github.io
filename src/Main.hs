@@ -50,23 +50,25 @@ staticAssetPattern =
         .||. "fonts/**.woff2"
 
 pageAssetPattern =
-    "pages/**/*.png"
-        .||. "pages/**/*.jpg"
-        .||. "pages/**/*.gif"
-        .||. "pages/**/*.mkv"
+    "pages/**.png"
+        .||. "pages/**.jpg"
+        .||. "pages/**.gif"
+        .||. "pages/**.mkv"
 
-metadataPattern = "**/*.metadata"
-imageAssetPattern = "**/*.png" .||. "**/*.jpg" .||. "**/*.gif"
-videoAssetPattern = "**/*.mkv" .||. "**/*.mp4"
+metadataPattern = "**.metadata"
+imageAssetPattern = "**.png" .||. "**.jpg" .||. "**.gif"
+videoAssetPattern = "**.mkv" .||. "**.mp4"
 
 assetPattern = metadataPattern .||. imageAssetPattern .||. videoAssetPattern
 notAssetPattern = complement assetPattern
 
 recursivePattern = "pages/**" .&&. notAssetPattern
-indexPattern = "**/index.*"
+indexPattern = "**index.*"
 notIndexPattern = complement indexPattern
 recursiveCategoriesPattern = recursivePattern .&&. indexPattern
 recursivePagesPattern = recursivePattern .&&. notIndexPattern
+
+templatePattern = "templates/**.html"
 
 htmlTemplate = "templates/html.html"
 footerTemplate = "templates/footer.html"
@@ -79,7 +81,7 @@ flexScrollTemplate = "templates/flex-scroll.html"
 postTemplate = "templates/post.html"
 categoryTemplate = "templates/category.html"
 
-cssTemplate = "css/*.scss"
+cssTemplate = "css/main.scss"
 
 highlightStyleDefault = breezeDark
 highlightStyleJson = "style.json"
@@ -106,23 +108,25 @@ applyLayoutTemplate :: FileTree (Identifier, Metadata) -> Context String -> Item
 applyLayoutTemplate metaTree ctx item = do
     let ident = itemIdentifier item
 
-    let identHeader = setVersion (Just versionHeader) ident
-    header <- loadBody identHeader :: Compiler String
+    let [identHeader, identBody, identMenu] =
+            flip setVersion ident . Just
+                <$> [ versionHeader
+                    , versionBody
+                    , versionMenu
+                    ]
 
-    let identBody = setVersion (Just versionBody) ident
-    body <- load identBody :: Compiler (Item String)
+    bodyHeader <- loadBody identHeader :: Compiler String
+    [body, menu] <- mapM load [identBody, identMenu] :: Compiler [Item String]
 
-    let identMenu = setVersion (Just versionMenu) ident
-    menu <- load identMenu :: Compiler (Item String)
-
+    menuHeader <- makeEmptyItem >>= loadAndApplyTemplate "templates/sidebar/header.html" ctx >>= return . itemBody :: Compiler String
     footer <- loadBody "footer.html"
 
     let panel header footer ctx =
             loadAndApplyTemplate flexScrollTemplate ctx
                 >=> applyFlexColumn header footer ctx
 
-    body' <- panel (Just header) Nothing ctx body
-    menu' <- panel (Just header) Nothing ctx menu
+    body' <- panel (Just bodyHeader) Nothing ctx body
+    menu' <- panel (Just menuHeader) Nothing ctx menu
 
     makeItem (itemBody body')
         >>= applyFlexRow (Just (itemBody menu')) Nothing ctx
@@ -144,7 +148,7 @@ postCtx :: Context String
 postCtx = dateField "date" "%B %e, %Y" `mappend` defaultContext
 
 -- Templates
-templates = match "templates/**.html" $ compile templateBodyCompiler
+templates = match templatePattern $ compile templateBodyCompiler
 
 -- Hoist the provided route one directory upward
 parentRoute =
@@ -176,6 +180,14 @@ makeMetaTree =
 foldDetails (Branch a as) = H.details H.! A.open "" $ H.toHtml a <> mconcat (foldDetails <$> as)
 foldDetails (Leaf a) = H.toHtml a
 
+makeEmptyItem = makeItem ""
+
+slugCompiler ctx =
+    makeEmptyItem
+        >>= loadAndApplyTemplate
+            slugTemplate
+            ctx
+
 main :: IO ()
 main = do
     -- Hakyll composition
@@ -183,15 +195,16 @@ main = do
         pandocStyle <- tryLoadStyle highlightStyleDefault highlightStyleJson
         let pandocCompiler' = pandocCompilerWithStyle pandocStyle
 
-        -- wallpapers landscapeWallpaperPattern portraitWallpaperPattern
+        sassHandling pandocStyle cssTemplate "css/**.scss"
 
+        templates
         staticAssets
         pageAssets
 
-        sassHandling pandocStyle cssTemplate
+        -- wallpapers landscapeWallpaperPattern portraitWallpaperPattern
 
         -- Create tree structure
-        fileTree <- makeFileTree ("pages/**/*.md" .||. "pages/**/*.html")
+        fileTree <- makeFileTree ("pages/**.md" .||. "pages/**.html")
         -- error $ show fileTree
         let identTree = makeIdentTree fileTree
         -- error $ show identTree
@@ -199,22 +212,16 @@ main = do
         -- error $ show metaTree
 
         -- Build page breadcrumb data, compiler
-        breadcrumbs <- buildTagsWith getBreadcrumb recursivePagesPattern $ fromCapture "*/index.md"
+        breadcrumbs <- buildTagsWith getBreadcrumb recursivePagesPattern $ fromCapture "**/index.md"
         -- error $ showTags breadcrumbs
-
-        let pageCtx = breadcrumbField "breadcrumb" breadcrumbs `mappend` defaultContext
-        let categoryCtx postPat =
-                listField "posts" postCtx (loadAll postPat)
-                    `mappend` breadcrumbFieldWith (getBreadcrumbWith pop) "breadcrumb" breadcrumbs
-                    `mappend` defaultContext
 
         let routes a = case a of
                 Branch a as -> [a] <> concatMap routes as
-                Leaf a -> [a | matches ("**/*.md" .||. "**/*.html") a]
+                Leaf a -> [a | matches ("**.md" .||. "**.html") a]
 
         let pages a = case a of
                 Branch a as -> concatMap pages as
-                Leaf a -> [a | matches ("**/*.md" .||. "**/*.html") a]
+                Leaf a -> [a | matches ("**.md" .||. "**.html") a]
 
         let categories a = do
                 let children a = case a of
@@ -229,11 +236,50 @@ main = do
         match "footer.html" $ compile getResourceBody
 
         -- Compile headers, menus
-        match (fromList $ routes identTree) $ do
-            version versionSlug $ do
-                compile $ do
-                    makeItem "" >>= loadAndApplyTemplate slugTemplate pageCtx
+        let slugCtx =
+                field
+                    "url"
+                    ( return
+                        . flip replaceExtension "html"
+                        . ("/" ++)
+                        . joinPath
+                        . tail
+                        . splitDirectories
+                        . toFilePath
+                        . itemIdentifier
+                    )
 
+        let fieldMaybeIcon def =
+                field
+                    "icon"
+                    ( \a -> do
+                        let id = itemIdentifier a
+                        icon <- getMetadataField id "icon"
+                        return $ fromMaybe def icon
+                    )
+
+        let fieldMaybeIconColor def =
+                field
+                    "icon-color"
+                    ( \a -> do
+                        let id = itemIdentifier a
+                        color <- getMetadataField id "icon-color"
+                        return $ fromMaybe def color
+                    )
+
+        let pageCtx =
+                breadcrumbField "breadcrumb" breadcrumbs
+                    <> fieldMaybeIcon "file"
+                    <> fieldMaybeIconColor "white"
+                    <> defaultContext
+
+        let categoryCtx =
+                breadcrumbFieldWith (getBreadcrumbWith pop) "breadcrumb" breadcrumbs
+                    <> fieldMaybeIcon "custom-folder"
+                    <> fieldMaybeIconColor "purple"
+                    <> defaultContext
+
+        match (fromList $ routes identTree) $ do
             version versionMenu $ do
                 compile $ do
                     menuTree metaTree
@@ -241,16 +287,17 @@ main = do
 
             version versionHeader $ do
                 compile $ do
-                    makeItem "" >>= loadAndApplyTemplate headerTemplate pageCtx
+                    makeEmptyItem >>= loadAndApplyTemplate headerTemplate pageCtx
 
             route recursiveRoute
             compile $
-                makeItem ""
+                makeEmptyItem
                     >>= applyLayoutTemplate metaTree pageCtx
                     >>= relativizeUrls
 
         --- Specialized compilers
-        let providers = defaultProviders
+        let providers =
+                defaultProviders
                     & withCompiler "None" getResourceBody
                     & withCompiler "Default" pandocCompiler'
                     & withCompiler "pandoc" pandocCompiler'
@@ -262,11 +309,15 @@ main = do
 
         -- Compile pages
         let pageSpec = spec pandocCompiler' pageCtx postTemplate
-        
+
         match (fromList $ pages identTree) $ do
             version versionBody $ do
                 compile $
                     overridableCompiler pageSpec
+
+            version versionSlug $
+                compile $
+                    slugCompiler (slugCtx <> pageCtx)
 
         -- Compile categories
         let bodyCompiler = do
@@ -274,8 +325,14 @@ main = do
                 let ident' = setVersion Nothing ident
                 let pat = fromList $ fromMaybe mempty $ Data.Map.lookup ident' categories'
 
-                let catDefaults = CompilerDefaults 
-                let catSpec = spec pandocCompiler' (categoryCtx pat) categoryTemplate
+                let catDefaults = CompilerDefaults
+                let catSpec =
+                        spec
+                            pandocCompiler'
+                            ( listField "posts" postCtx (loadAll pat)
+                                <> categoryCtx
+                            )
+                            categoryTemplate
 
                 overridableCompiler catSpec
 
@@ -283,4 +340,6 @@ main = do
             version versionBody $ do
                 compile bodyCompiler
 
-        templates
+            version versionSlug $ do
+                compile $
+                    slugCompiler (slugCtx <> categoryCtx)

@@ -1,6 +1,7 @@
 ---
 title: GL Tracer
 git: shfty-cpp/GLTracer
+icon: cpp
 published: 2024-02-08
 ---
 

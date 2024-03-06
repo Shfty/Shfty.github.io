@@ -1,6 +1,5 @@
 ---
 title: Computer Graphics
+icon: picture
 ---
-# Computer Graphics
-
 More traditional computer graphics projects.

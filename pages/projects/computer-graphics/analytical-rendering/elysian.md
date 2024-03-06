@@ -1,6 +1,7 @@
 ---
 title: Elysian
 git: Shfty/elysian
+icon: rust
 published: 2024-02-08
 ---
 
@@ -12,6 +13,7 @@ with the intent of outputting GPU-friendly representations, such as transpiled G
 Has since evolved into a fully-fledged language, with field function features represented within it as a library.
 
 Goals:
+
 * Simplicity / Unified Design
   * Decoupling between logic and implementation
     * All concrete implementations details are separated out into a compiler backend,

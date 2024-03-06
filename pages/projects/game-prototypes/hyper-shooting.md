@@ -2,6 +2,7 @@
 title: Hyper Shooting
 git: shfty-unity/hyper-shooting
 published: 2024-02-08
+icon: unity
 todo: Screenshots, GIFs
 ---
 

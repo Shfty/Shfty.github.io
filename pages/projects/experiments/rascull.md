@@ -2,6 +2,7 @@
 title: Rascull
 git: shfty-godot/rascull
 published: 2024-02-08
+icon: godot
 todo: Screenshots, GIFs
 ---
 

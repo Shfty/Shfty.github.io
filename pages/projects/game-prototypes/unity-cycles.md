@@ -2,6 +2,7 @@
 title: UnityCycles
 git: shfty-unity/UnityCycles
 published: 2024-02-08
+icon: unity
 todo: Screenshots, GIFs
 ---
 

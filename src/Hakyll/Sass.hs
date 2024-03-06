@@ -8,8 +8,8 @@ import Hakyll.Web.Sass
 import Text.Pandoc.Highlighting
 
 -- SASS hot-reloading
-sassHandling style template = do
-    scssDependency <- makePatternDependency template
+sassHandling style template deps = do
+    scssDependency <- makePatternDependency (deps .&&. complement template)
     rulesExtraDependencies [scssDependency] $ match template $ do
         route $ setExtension "css"
         compile (fmap compressCss <$> sassCompiler)

@@ -1,6 +1,7 @@
 ---
 title: Cons
 git: shfty-rust/cons
+icon: rust
 published: 2024-02-08
 ---
 

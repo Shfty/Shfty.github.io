@@ -2,6 +2,7 @@
 title: "Beat 'em Up"
 git: shfty-unreal/BeatEmUp
 published: 2024-02-08
+icon: unreal
 todo: Screenshots, GIFs
 ---
 

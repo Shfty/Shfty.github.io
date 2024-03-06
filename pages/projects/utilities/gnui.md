@@ -1,6 +1,7 @@
 ---
 title: GNUI
 git: shfty-rust/gnui
+icon: rust
 published: 2024-02-08
 todo: Screenshots, GIFs
 ---

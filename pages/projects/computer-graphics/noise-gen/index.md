@@ -1,6 +1,7 @@
 ---
 title: Noise Gen
 git: shfty-cpp/NoiseGen
+icon: cpp
 published: 2024-02-08
 ---
 

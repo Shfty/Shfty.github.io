@@ -1,6 +1,7 @@
 ---
-title: TLP Basic
+title: Type-Level BASIC
 git: shfty-rust/tlp-basic
+icon: rust
 published: 2024-02-08
 ---
 

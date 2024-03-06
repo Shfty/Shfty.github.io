@@ -1,6 +1,7 @@
 ---
 title: Text Tracer
 git: shfty-cpp/TextTracer
+icon: cpp
 published: 2024-02-08
 ---
 

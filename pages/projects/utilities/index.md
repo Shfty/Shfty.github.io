@@ -1,5 +1,6 @@
 ---
 title: Utilities
+icon: van-utility
 ---
 # Utility Software
 

@@ -1,6 +1,7 @@
 ---
 title: NeGcon PS3 Pad
 git: shfty-embedded/negcon-ps3-pad
+icon: gamepad
 published: 2024-02-08
 ---
 

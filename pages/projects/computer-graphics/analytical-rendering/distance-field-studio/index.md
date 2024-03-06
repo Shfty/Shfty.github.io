@@ -1,6 +1,7 @@
 ---
 title: Distance Field Studio
 git: shfty-godot/distance-field-studio
+icon: godot
 published: 2024-02-08
 ---
 

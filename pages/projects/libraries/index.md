@@ -1,5 +1,6 @@
 ---
 title: Libraries
+icon: library-shelves
 ---
 # Libraries
 

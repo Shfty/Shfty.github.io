@@ -18,9 +18,17 @@ details {
     font-family: var(--code-font)
 }
 
-nav details > :not(summary) {
-    margin-left: 2ch;
+nav details > :not(summary):not(details) {
+    margin-left: 4ch;
     display: block;
+}
+
+nav details {
+    margin-left: 2ch;
+}
+
+nav > details {
+    margin-left: 0;
 }
 
 nav summary {
@@ -92,39 +100,12 @@ header > *, footer > *, nav > * {
     display: block;
 }
 
-nav-heading::before {
-    content: "  ";
-    white-space: pre;
-    font-size: 1.0rem;
-    line-height: 1.3rem;
-}
-
-nav-dir::before {
-    content: "  ";
-    white-space: pre;
-    font-size: 1.0rem;
-    line-height: 1.3rem;
-}
-
-nav-file::before {
-    content: "    ";
-    white-space: pre;
-    font-size: 1.0rem;
-    line-height: 1.3rem;
-}
-
 header {
     height: 1.3rem;
 }
 
-main {
-    display: flex;
-    flex-direction: column;
-    flex: auto;
-    overflow: scroll;
-}
-
 main-content {
+    display: block;
     width: 100%;
 }
 
@@ -158,4 +139,16 @@ flex-column {
 flex-scroll {
     flex: auto;
     overflow: scroll;
+}
+
+img, video {
+    display: block;
+    margin: auto;
+    max-width: 100%;
+}
+
+figcaption {
+    width: 100%;
+    text-align: center;
+    font-style: italic;
 }

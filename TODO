@@ -1,4 +1,4 @@
-* >>= getResourceBody Generate breadcrumb data from metaTree
+* Generate breadcrumb data from metaTree
 
 * Formalize menu entries and header templating
   * Both of these can be thought of as variants of their source page,
@@ -27,6 +27,7 @@
     for purposes of sidebar menu and header readout
     * Filetype should provide a default glyph that can be overridden
       via a separate 'glyph' metadata field
+  * File type readout (i.e. icon and type name) should be a version, akin to slug
 
 * Clean URLs
   * Should be eliding index.html, stripping extensions,

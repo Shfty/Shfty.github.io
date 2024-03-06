@@ -1,5 +1,7 @@
 ---
 title: About
+icon: information
+icon-color: cyan
 ---
 Nullam imperdiet sodales orci vitae molestie. Nunc quam orci, pharetra a
 rhoncus vitae, eleifend id felis. Suspendisse potenti. Etiam vitae urna orci.

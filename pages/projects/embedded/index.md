@@ -1,5 +1,6 @@
 ---
 title: Embedded
+icon: chip
 ---
 # Embedded
 

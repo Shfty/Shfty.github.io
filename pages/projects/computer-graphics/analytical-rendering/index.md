@@ -1,5 +1,6 @@
 ---
 title: Analytical Rendering
+icon: file-picture
 ---
 # Analytical Rendering
 

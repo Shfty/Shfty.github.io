@@ -2,6 +2,7 @@
 title: Shmup 3D
 git: shfty-unreal/Shmup3D
 published: 2024-02-08
+icon: unreal
 todo: Screenshots, GIFs
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: Audio
+icon: seti-audio
 ---
 # Audio
 

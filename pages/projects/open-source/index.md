@@ -1,5 +1,6 @@
 ---
 title: Open Source
+icon: open-source
 ---
 # Noteworthy Contributions
 

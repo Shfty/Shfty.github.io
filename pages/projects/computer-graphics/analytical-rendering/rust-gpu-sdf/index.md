@@ -1,6 +1,7 @@
 ---
 title: Rust-GPU SDF
 git: shfty-rust/rust-gpu-sdf
+icon: rust
 published: 2024-02-08
 ---
 

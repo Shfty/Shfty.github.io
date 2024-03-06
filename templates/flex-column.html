@@ -1,4 +1,8 @@
-<flex-column>
+<flex-column
+    $if(id)$
+    id="$id$"
+    $endif$
+>
     $if(before)$
         $before$
     $endif$

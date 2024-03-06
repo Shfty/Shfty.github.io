@@ -2,6 +2,7 @@
 title: ZZ
 git: shfty-unreal/ZZ
 published: 2024-02-08
+icon: unreal
 todo: Screenshots, GIFs
 ---
 

@@ -3,14 +3,49 @@
   --glyph-left-hard-divider: "";
   --glyph-right-soft-divider: "";
   --glyph-left-soft-divider: "";
-  --glyph-linux-tux: "";
+  --glyph-linux-tux: " ";
   --glyph-language-markdown: " ";
   --glyph-branch: "";
   --glyph-custom-folder: " ";
   --glyph-file: "󰈔 ";
+  --glyph-document: "󰈙 ";
   --glyph-chevron-right: " ";
   --glyph-chevron-down: " ";
   --glyph-home: " ";
+  --glyph-book-education-outline: "󱛊";
+  --glyph-seti-audio: " ";
+  --glyph-tie: "󰔙";
+  --glyph-chip: " ";
+  --glyph-keyboard: "󰌌 ";
+  --glyph-gamepad: " ";
+  --glyph-gamepad-square: "󰺵 ";
+  --glyph-game-boy: "󱎓";
+  --glyph-open-source: " ";
+  --glyph-tools: "󱁤 ";
+  --glyph-van-utility: "󰟻 ";
+  --glyph-mortar-board: " ";
+  --glyph-book: " ";
+  --glyph-project: " ";
+  --glyph-picture: " ";
+  --glyph-file-picture: " ";
+  --glyph-library-shelves: "󰮩 ";
+  --glyph-flask: "󰂓 ";
+  --glyph-bevy: "󱗆 ";
+  --glyph-unreal: "󰦱 ";
+  --glyph-unity: "󰚯 ";
+  --glyph-godot: " ";
+  --glyph-cpp: "󰙲 ";
+  --glyph-csharp: "󰌛 ";
+  --glyph-rust: "󱘗 ";
+  --glyph-haskell: "󰲒 ";
+  --glyph-space-invaders: "󰯉 ";
+  --glyph-cube: " ";
+  --glyph-moon: " ";
+  --glyph-playstation: "󰐔 ";
+  --glyph-sword: "󰓥 ";
+  --glyph-information: "󰙎";
+  --glyph-contact: "󰛋 ";
+  --glyph-lightning-bolt: "󱐋";
 }
 
 x-glyph[type="right-hard-divider"]::before {
@@ -38,25 +73,167 @@ x-glyph[type="language-markdown"]::before {
 }
 
 x-glyph[type="branch"]::before {
-    content: var(--glyph-branch)
+    content: var(--glyph-branch);
 }
 
 x-glyph[type="custom-folder"]::before {
-    content: var(--glyph-custom-folder)
+    content: var(--glyph-custom-folder);
 }
 
 x-glyph[type="chevron-right"]::before {
-    content: var(--glyph-chevron-right)
+    content: var(--glyph-chevron-right);
 }
 
 x-glyph[type="chevron-down"]::before {
-    content: var(--glyph-chevron-down)
+    content: var(--glyph-chevron-down);
 }
 
 x-glyph[type="home"]::before {
-    content: var(--glyph-home)
+    content: var(--glyph-home);
 }
 
 x-glyph[type="file"]::before {
-    content: var(--glyph-file)
+    content: var(--glyph-file);
+}
+
+x-glyph[type="document"]::before {
+    content: var(--glyph-document);
+}
+
+x-glyph[type="book-education-outline"]::before {
+    content: var(--glyph-book-education-outline);
+}
+
+x-glyph[type="seti-audio"]::before {
+    content: var(--glyph-seti-audio);
+}
+
+x-glyph[type="tie"]::before {
+    content: var(--glyph-tie);
+}
+
+x-glyph[type="chip"]::before {
+    content: var(--glyph-chip);
+}
+
+x-glyph[type="keyboard"]::before {
+    content: var(--glyph-keyboard);
+}
+
+x-glyph[type="gamepad"]::before {
+    content: var(--glyph-gamepad);
+}
+
+x-glyph[type="gamepad-square"]::before {
+    content: var(--glyph-gamepad-square);
+}
+
+x-glyph[type="game-boy"]::before {
+    content: var(--glyph-game-boy);
+}
+
+x-glyph[type="open-source"]::before {
+    content: var(--glyph-open-source);
+}
+
+x-glyph[type="tools"]::before {
+    content: var(--glyph-tools);
+}
+
+x-glyph[type="van-utility"]::before {
+    content: var(--glyph-van-utility);
+}
+
+x-glyph[type="mortar-board"]::before {
+    content: var(--glyph-mortar-board);
+}
+
+x-glyph[type="book"]::before {
+    content: var(--glyph-book);
+}
+
+x-glyph[type="project"]::before {
+    content: var(--glyph-project);
+}
+
+x-glyph[type="picture"]::before {
+    content: var(--glyph-picture);
+}
+
+x-glyph[type="file-picture"]::before {
+    content: var(--glyph-file-picture);
+}
+
+x-glyph[type="library-shelves"]::before {
+    content: var(--glyph-library-shelves);
+}
+
+x-glyph[type="flask"]::before {
+    content: var(--glyph-flask);
+}
+
+x-glyph[type="bevy"]::before {
+    content: var(--glyph-bevy);
+}
+
+x-glyph[type="unreal"]::before {
+    content: var(--glyph-unreal);
+}
+
+x-glyph[type="unity"]::before {
+    content: var(--glyph-unity);
+}
+
+x-glyph[type="godot"]::before {
+    content: var(--glyph-godot);
+    color: #4d9fdc;
+}
+
+x-glyph[type="cpp"]::before {
+    content: var(--glyph-cpp);
+}
+
+x-glyph[type="csharp"]::before {
+    content: var(--glyph-csharp);
+}
+
+x-glyph[type="rust"]::before {
+    content: var(--glyph-rust);
+    color: #F46623;
+}
+
+x-glyph[type="haskell"]::before {
+    content: var(--glyph-haskell);
+}
+
+x-glyph[type="space-invaders"]::before {
+    content: var(--glyph-space-invaders);
+}
+
+x-glyph[type="cube"]::before {
+    content: var(--glyph-cube);
+}
+
+x-glyph[type="moon"]::before {
+    content: var(--glyph-moon);
+}
+
+x-glyph[type="playstation"]::before {
+    content: var(--glyph-playstation);
+}
+
+x-glyph[type="sword"]::before {
+    content: var(--glyph-sword);
+}
+
+x-glyph[type="information"]::before {
+    content: var(--glyph-information);
+}
+
+x-glyph[type="contact"]::before {
+    content: var(--glyph-contact);
+}
+
+x-glyph[type="lightning-bolt"]::before {
+    content: var(--glyph-lightning-bolt);
 }

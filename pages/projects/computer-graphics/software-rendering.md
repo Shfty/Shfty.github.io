@@ -1,6 +1,7 @@
 ---
 title: Software Rendering
 git: shfty-rust/software_rendering
+icon: rust
 published: 2024-02-08
 todo: Screenshots, GIFs
 ---

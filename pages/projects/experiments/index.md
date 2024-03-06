@@ -1,5 +1,6 @@
 ---
 title: Experiments
+icon: flask
 ---
 # Experiments
 

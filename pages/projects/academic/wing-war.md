@@ -1,6 +1,7 @@
 ---
 title: Wing War
 git: shfty-csharp/WingWar
+icon: csharp
 published: 2024-02-08
 todo: Screenshots, GIFs
 ---
