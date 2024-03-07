@@ -16,16 +16,15 @@ main-content {
     font-family: var(--text-font);
 }
 
-.fixed-width > * {
-    font-size: 1.0rem;
-    line-height: 1.3rem;
-}
-
 .fixed-width {
     font-size: 0;
     line-height: 0;
 }
 
+.fixed-width > * {
+    font-size: 1.0rem;
+    line-height: 1.3rem;
+}
 
 b {
     font-weight: 500;

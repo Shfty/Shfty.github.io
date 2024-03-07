@@ -43,18 +43,12 @@ nav details:not(details[open]) > summary::before {
     content: var(--glyph-chevron-right);
 }
 
-panel-sidebar {
+flex-column.menu {
     width: 40rch;
     flex-direction: column;
 }
 
-panel-content {
-    flex: auto;
-    display: flex;
-    flex-direction: column;
-}
-
-panel-sidebar {
+flex-column.menu {
     display: none;
 }
 
@@ -71,8 +65,9 @@ panel-sidebar {
 }
 
 @media only screen and (min-width: 120rch) {
-    panel-sidebar {
+    flex-column.menu {
         display: flex;
+        flex: none;
     }
 }
 

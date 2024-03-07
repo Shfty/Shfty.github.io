@@ -48,6 +48,10 @@
   --glyph-lightning-bolt: "󱐋";
 }
 
+x-glyph {
+    //white-space: pre;
+}
+
 x-glyph[type="right-hard-divider"]::before {
     content: var(--glyph-right-hard-divider);
 }
@@ -204,6 +208,7 @@ x-glyph[type="rust"]::before {
 
 x-glyph[type="haskell"]::before {
     content: var(--glyph-haskell);
+    color: #999999;
 }
 
 x-glyph[type="space-invaders"]::before {

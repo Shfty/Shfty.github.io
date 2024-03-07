@@ -5,10 +5,12 @@ icon: rust
 published: 2024-02-08
 ---
 
-![Animated](animated.gif)
+Signed Distance Field rendering library based on bevy-rust-gpu.
 
-SDF rendering library based on bevy-rust-gpu. Encodes field functions as native Rust functions,
-using various type-level trait machinery to represent category theoric abstractions.
+Encodes field functions as native Rust functions, using various type-level trait machinery to represent category theoric abstractions.
+
 Unfortunately, limitations in rust-gpu prevented it from reaching the desired level of abstraction,
-thus giving rise to the creation of Elysian.
+thus giving rise to the creation of [Elysian](../elysian.html).
+
+![Dynamic implicit surface](animated.gif)
 

@@ -2,4 +2,4 @@
 title: Computer Graphics
 icon: picture
 ---
-More traditional computer graphics projects.
+Assorted computer graphics projects.

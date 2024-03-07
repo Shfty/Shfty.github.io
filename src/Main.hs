@@ -27,9 +27,13 @@ import Data.Maybe
 import Hakyll.Commands (watch)
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
+import Data.Aeson.Types (parseMaybe)
+import Data.Aeson ((.:))
 
 --------------------------------------------------------------------------------
 -- Constants
+
+configPattern = "config"
 
 imagesPattern = "images/*"
 
@@ -70,7 +74,7 @@ recursivePagesPattern = recursivePattern .&&. notIndexPattern
 
 templatePattern = "templates/**.html"
 
-htmlTemplate = "templates/html.html"
+documentTemplate = "templates/document.html"
 footerTemplate = "templates/footer.html"
 headerTemplate = "templates/content/header.html"
 slugTemplate = "templates/slug.html"
@@ -121,17 +125,17 @@ applyLayoutTemplate metaTree ctx item = do
     menuHeader <- makeEmptyItem >>= loadAndApplyTemplate "templates/sidebar/header.html" ctx >>= return . itemBody :: Compiler String
     footer <- loadBody "footer.html"
 
-    let panel header footer ctx =
-            loadAndApplyTemplate flexScrollTemplate ctx
-                >=> applyFlexColumn header footer ctx
+    let panel header footer scrollCtx columnCtx =
+            loadAndApplyTemplate flexScrollTemplate scrollCtx
+                >=> applyFlexColumn header footer columnCtx
 
-    body' <- panel (Just bodyHeader) Nothing ctx body
-    menu' <- panel (Just menuHeader) Nothing ctx menu
+    body' <- panel (Just bodyHeader) Nothing ctx (constField "class" "body" <> ctx) body
+    menu' <- panel (Just menuHeader) Nothing ctx (constField "class" "menu divider-right" <> ctx) menu
 
     makeItem (itemBody body')
         >>= applyFlexRow (Just (itemBody menu')) Nothing ctx
         >>= applyFlexColumn Nothing (Just footer) ctx
-        >>= loadAndApplyTemplate htmlTemplate ctx
+        >>= loadAndApplyTemplate documentTemplate ctx
 
 -- Static assets (images, fonts, etc.)
 staticAssets = match staticAssetPattern $ do
@@ -192,6 +196,11 @@ main :: IO ()
 main = do
     -- Hakyll composition
     hakyll $ do
+        config <- getMetadata $ fromFilePath "config" :: Rules Metadata
+
+        -- TODO: Use this below, will likely need a refactor around monadic Maybe
+        let highlightPath = parseMaybe (.: "highlightStyle") config :: Maybe String
+
         pandocStyle <- tryLoadStyle highlightStyleDefault highlightStyleJson
         let pandocCompiler' = pandocCompilerWithStyle pandocStyle
 

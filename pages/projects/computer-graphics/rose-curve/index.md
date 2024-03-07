@@ -5,7 +5,7 @@ icon: godot
 published: 2024-02-08
 ---
 
-![Rose Curve](video.mkv)
-
 A shader for rendering parametric rose curves.
+
+![Rose Curve](video.mkv)
 
