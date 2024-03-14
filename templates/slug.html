@@ -1,11 +1,9 @@
-<a href="$url$">
-    $if(icon)$
-    <x-glyph
-        type="$icon$"
-        $if(icon-color)$
-        data-fg="$icon-color$"
-        $endif$
-    ></x-glyph>
+$if(icon)$
+<x-glyph
+    type="$icon$"
+    $if(icon-color)$
+    data-fg="$icon-color$"
     $endif$
-    <pre>$title$</pre>
-</a>
+></x-glyph>
+$endif$
+<div style="display: inline;">$title$</div>

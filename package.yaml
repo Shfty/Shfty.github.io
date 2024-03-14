@@ -34,3 +34,4 @@ dependencies:
   - MissingH
   - transformers
   - mtl
+  - wai-app-static

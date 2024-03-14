@@ -20,16 +20,23 @@ import System.FilePath
 import Text.Blaze.Html.Renderer.String
 import Text.Pandoc.Highlighting
 
+import qualified Network.Wai.Application.Static as Static
+
 import Data.Aeson ((.:))
 import qualified Data.Aeson as JSON
 import Data.Aeson.Types (parseMaybe)
+import Data.Bifunctor
 import qualified Data.ByteString.Lazy as ByteString
+import Data.List (intersperse)
+import Data.Map (toList)
 import qualified Data.Map
 import Data.Maybe
+import qualified Data.Text as Text
 import Hakyll.Commands (watch)
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 import Text.Pandoc (runIOorExplode)
+import WaiAppStatic.Types (fileName, fromPiece)
 
 --------------------------------------------------------------------------------
 -- Constants
@@ -161,7 +168,7 @@ parentRoute =
             <*> joinPath . drop 1 . splitPath . takeDirectory
             <$> toFilePath
 
-recursiveRoute = composeRoutes (setExtension "html") parentRoute
+recursiveRoute = composeRoutes (setExtension "") parentRoute
 
 makeIdentTree fileTree = do
     let isIndex = (== "index") . takeBaseName
@@ -192,10 +199,28 @@ slugCompiler ctx =
             slugTemplate
             ctx
 
+makeBreadcrumbs :: [Identifier] -> FileTree Identifier -> [(Identifier, [Identifier])]
+makeBreadcrumbs acc (Branch a as) = [(a, acc)] <> mconcat (makeBreadcrumbs (acc <> [a]) <$> as)
+makeBreadcrumbs acc (Leaf a) = [(a, acc)]
+
+serverSettings :: FilePath -> Static.StaticSettings
+serverSettings path = baseSettings{Static.ssGetMimeType = getMimeType}
+  where
+    baseSettings = Static.defaultFileServerSettings path
+    defaultGetMimeType = Static.ssGetMimeType baseSettings
+
+    -- Overrides MIME type for files with no extension
+    -- so that HTML pages need no extension.
+    getMimeType file =
+        if Text.elem '.' (fromPiece $ fileName file)
+            then defaultGetMimeType file
+            else return "text/html"
+
 main :: IO ()
 main = do
+    let config = defaultConfiguration{previewSettings = serverSettings}
     -- Hakyll composition
-    hakyll $ do
+    hakyllWith config $ do
         config <- getMetadata $ fromFilePath "config" :: Rules Metadata
 
         let highlightPath = parseMaybe (.: "highlightStyle") config :: Maybe String
@@ -218,15 +243,31 @@ main = do
         -- Create tree structure
         fileTree <- makeFileTree ("pages/**.md" .||. "pages/**.html")
         -- error $ show fileTree
-        let identTree = makeIdentTree fileTree
+
+        let identTree_ = makeIdentTree fileTree
+
+        -- TODO: Lift into Rules / Compiler monad and sort by metadata
+        --       Hakyll likely has some machinery to help with this
+        --       (ex. order-by-date functionality)
+        let pred a b = case (a, b) of
+                (Branch a as, Leaf b) -> LT
+                (Leaf a, Branch b bs) -> GT
+                (Branch a as, Branch b bs) -> compare a b
+                (Leaf a, Leaf b) -> compare a b
+
+        let identTree = sortFileTreeBy pred identTree_
+
         -- error $ show identTree
+
         metaTree <- makeMetaTree identTree
         -- error $ show metaTree
 
-        -- Build page breadcrumb data, compiler
-        breadcrumbs <- buildTagsWith getBreadcrumb recursivePagesPattern $ fromCapture "**/index.md"
-        -- error $ showTags breadcrumbs
+        let breadcrumbs_ = makeBreadcrumbs [] identTree
+        -- error $ mconcat $ intersperse "\n" $ show <$> breadcrumbs_
 
+        let breadcrumbs = Data.Map.fromList breadcrumbs_
+
+        -- Compilation
         let routes a = case a of
                 Branch a as -> [a] <> concatMap routes as
                 Leaf a -> [a | matches ("**.md" .||. "**.html") a]
@@ -280,17 +321,30 @@ main = do
                     )
 
         let pageCtx =
-                breadcrumbField "breadcrumb" breadcrumbs
-                    <> fieldMaybeIcon "file"
+                fieldMaybeIcon "file"
                     <> fieldMaybeIconColor "white"
                     <> defaultContext
 
+        let breadcrumbCtx =
+                listFieldWith
+                    "breadcrumb"
+                    (slugCtx <> pageCtx)
+                    ( \a -> do
+                        let id = setVersion Nothing $ itemIdentifier a
+                        let ids = fromMaybe (error $ "No breadcrumb entry for " ++ show id) $ Data.Map.lookup id breadcrumbs
+                        let ids' = setVersion (Just "slug") <$> ids
+                        mapM load ids' :: Compiler [Item String]
+                    )
+
         let categoryCtx =
-                breadcrumbFieldWith (getBreadcrumbWith pop) "breadcrumb" breadcrumbs
-                    <> fieldMaybeIcon "custom-folder"
+                fieldMaybeIcon "custom-folder"
                     <> fieldMaybeIconColor "purple"
                     <> defaultContext
 
+        -- TODO:
+        -- \* Add a tag to the current page's menu entry so it can be highlighted
+        -- \* Lift foldDetails into Compiler monad so details tags
+        --   outside of the current breadcrumb can default to closed
         match (fromList $ routes identTree) $ do
             version versionMenu $ do
                 compile $ do
@@ -299,7 +353,7 @@ main = do
 
             version versionHeader $ do
                 compile $ do
-                    makeEmptyItem >>= loadAndApplyTemplate headerTemplate pageCtx
+                    makeEmptyItem >>= loadAndApplyTemplate headerTemplate (breadcrumbCtx <> pageCtx)
 
             route recursiveRoute
             compile $

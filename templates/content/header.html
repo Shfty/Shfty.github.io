@@ -8,20 +8,28 @@
             <x-glyph type="left-hard-divider" data-fg="purple"></x-glyph>
             <pre> </pre>
         </flex-row>
-        <flex-row style="justify-content: flex-start; overflow: scroll; flex-direction: row-reverse;">
+        <flex-row style="justify-content: flex-start; overflow: scroll;">
             <x-glyph type="branch" data-fg="purple"></x-glyph>
             <pre> </pre>
             <span data-fg="purple">master</span>
             <pre> </pre>
             <x-glyph type="left-soft-divider" data-fg="purple"></x-glyph>
             <pre> </pre>
-            $if(breadcrumb)$
-                $breadcrumb$
+            $for(breadcrumb)$
+                <a href="$url$">
+                    $partial("templates/slug.html")$
+                </a>
+            $sep$
                 <pre> </pre>
                 <x-glyph type="left-soft-divider"></x-glyph>
                 <pre> </pre>
-            $endif$
-            <span>$title$</span>
+            $endfor$
+            <pre> </pre>
+            <x-glyph type="left-soft-divider"></x-glyph>
+            <pre> </pre>
+            <div>
+                $partial("templates/slug.html")$
+            </div>
         </flex-row>
         <flex-row style="justify-content: flex-start; flex: none;">
             <pre> </pre>
@@ -33,8 +41,10 @@
             <pre> </pre>
             <x-glyph type="right-soft-divider"></x-glyph>
             <pre> </pre>
-            <x-glyph type="language-markdown"></x-glyph>
-            <span>markdown</span>
+            <div>
+                <x-glyph type="language-markdown"></x-glyph>
+                <span>markdown</span>
+            </div>
             <pre>  </pre>
             <span data-fg="purple">Top</span>
             <pre>  </pre>

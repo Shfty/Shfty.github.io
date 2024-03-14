@@ -3,17 +3,20 @@
 
 :root {
   --text-font: 'Fira Sans';
-  --header-font: 'FiraCode Nerd Font';
   --code-font: 'FiraCode Nerd Font';
 }
 
 body {
     font-weight: 300;
-    font-family: var(--header-font);
+    font-family: var(--code-font);
 }
 
 main-content {
     font-family: var(--text-font);
+}
+
+x-glyph {
+    font-family: var(--code-font)
 }
 
 .fixed-width {

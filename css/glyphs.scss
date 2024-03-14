@@ -46,6 +46,7 @@
   --glyph-information: "󰙎";
   --glyph-contact: "󰛋 ";
   --glyph-lightning-bolt: "󱐋";
+  --glyph-window-maximize: "󰖯 ";
 }
 
 x-glyph {
@@ -195,10 +196,12 @@ x-glyph[type="godot"]::before {
 
 x-glyph[type="cpp"]::before {
     content: var(--glyph-cpp);
+    color: var(--color-cyan)
 }
 
 x-glyph[type="csharp"]::before {
     content: var(--glyph-csharp);
+    color: var(--color-pink)
 }
 
 x-glyph[type="rust"]::before {
@@ -241,4 +244,8 @@ x-glyph[type="contact"]::before {
 
 x-glyph[type="lightning-bolt"]::before {
     content: var(--glyph-lightning-bolt);
+}
+
+x-glyph[type="window-maximize"]::before {
+    content: var(--glyph-window-maximize);
 }

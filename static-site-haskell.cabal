@@ -41,4 +41,5 @@ executable site
     , text
     , text-conversions
     , transformers
+    , wai-app-static
   default-language: Haskell2010

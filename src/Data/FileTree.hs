@@ -39,13 +39,17 @@ menuTree :: FileTree (Identifier, Metadata) -> Compiler (FileTree H.Html)
 menuTree a = do
     case a of
         (Branch (id, meta) as) -> do
+            route <- getRoute id
+            let route' = fromMaybe (error "No route") route
             slug <- loadBody $ setVersion (Just "slug") id :: Compiler String
-            let html = H.summary $ H.preEscapedString slug
+            let html = H.summary $ H.a H.! A.href (H.toValue $ "/" ++ route') $ H.preEscapedString slug
             as' <- mapM menuTree as
             mapM menuTree as >>= return . Branch html
         (Leaf (id, meta)) -> do
+            route <- getRoute id
+            let route' = fromMaybe (error "No route") route
             slug <- loadBody $ setVersion (Just "slug") id :: Compiler String
-            return $ Leaf $ H.preEscapedString slug
+            return $ Leaf $ H.a H.! A.href (H.toValue $ "/" ++ route') $ H.preEscapedString slug
 
 tag :: FileTree FilePath -> FileTree (FilePath, FilePath)
 tag tree = evalState (tagStep tree) mempty
@@ -72,7 +76,7 @@ makeFileTree pat = do
     items <- getMatches pat
     let paths = makePaths items
     let [fs] = foldl' concatFileTree [] (return <$> paths)
-    return $ sortFileTree fs
+    return fs
 
 -- Recursively merge chains created by makeFS into a single tree
 concatFileTree :: (Ord a) => [FileTree a] -> [FileTree a] -> [FileTree a]
@@ -84,8 +88,13 @@ concatFileTree [Branch a as] [Branch b bs] =
 concatFileTree a b = a <> b
 
 -- Recursive sort
-sortFileTree (Branch x xs) = Branch x $ sort (sortFileTree <$> xs)
-sortFileTree a = a
+sortFileTree a = case a of
+    Branch x xs -> Branch x $ sort (sortFileTree <$> xs)
+    a -> a
+
+sortFileTreeBy f a = case a of
+    Branch x xs -> Branch x $ sortBy f (sortFileTree <$> xs)
+    a -> a
 
 -- Filter leaves by their value
 filterFileTree f a = do

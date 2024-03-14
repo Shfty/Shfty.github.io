@@ -1,49 +1,14 @@
-* Generate breadcrumb data from metaTree
-
-* Formalize menu entries and header templating
-  * Both of these can be thought of as variants of their source page,
-    and can be generated independently of other content
-    * Ergo, render them out as versions using a domain-specific compiler,
-      so they can be pulled into sidebars, headers, etc. fully formed
-    * Should be able to set it up such that pages can specify
-      their header template/s via metadata
-
-* Support arbitrary extensions for pages in recursive hierarchy
-  * Currently hardcoded to .md, should be an open set
-
-* Move title element into a proper template
-  * Pages should be free to elide it and provide their own
-    * ex. Home page should be able to elide the home glyph and ~
-      in favour of "Home" or similar
-
-* Investigate compile-time configuration
-  * Useful for development / release profiles that can filter out content
-    based on some tag or arbitrary metadata element
-  * Does the hakyllWith function provide means to handle command line arguments?
-    * If not, can parse a config file similar to the pandoc highlight JSON
-
-* File type metadata
-  * Should provide the means to look up a name and glyph
-    for purposes of sidebar menu and header readout
-    * Filetype should provide a default glyph that can be overridden
-      via a separate 'glyph' metadata field
-  * File type readout (i.e. icon and type name) should be a version, akin to slug
-
 * Clean URLs
-  * Should be eliding index.html, stripping extensions,
-    possibly performing some filename transform for consistency
-  * The Hakyll site should have a tutorial on this
+  * Now using extensionless URLs, but need to strip index,
+    and ensure all URLs are properly handled
+    (ex. currently-broken breadcrumb URLs)
+  * https://chungyc.org/article/technical/website/extensionless
+  * May need a separate fixup procedure for deployment to GitHub Pages,
+    as it doesn't support .htaccess, but does support extensionless URLs
 
-* Support for regular tags
-  * Apply recursive categories as regular category tags
-  * Extend with arbitrary set of metadata-defined tags
-  * Generate free-standing index pages for each regular tag
-
-* Generalize sidebar / navigation panels under a single reusable component
-  * Fixed-width header + arbitrary content
-  * Should be able to use templating for this
-    * Build navigation content and header HTML,
-      then substitute into the appropriate template
+* Move breadcrumb into a separate header line
+  * Too wide for title position
+  * Could integrate with page content as a vertical list on narrow screens?
 
 * Current page highlight for sidebar
   * Should be able to style the link representing the active page
@@ -54,8 +19,29 @@
   * Ergo, the next-nicest approach is to expand all directories
     above the current file, and leave the rest closed
 
+* Support arbitrary extensions for pages in recursive hierarchy
+  * Currently hardcoded to .md, should be an open set
+
+* Use config metadata to setup development / release profiles
+  * Can modify the 'master' readout in the header to indicate current mode
+    * Or perhaps the 'NORMAL' tag - just something to make it obvious
+  * Allow specifying predicates (i.e. via tags) to filter pages out of release mode
+
+* File type metadata
+  * Should provide the means to look up a name and glyph
+    for purposes of sidebar menu and header readout
+    * Filetype should provide a default glyph that can be overridden
+      via a separate 'glyph' metadata field
+  * File type readout (i.e. icon and type name) should be a version, akin to slug
+
+* Support for regular tags
+  * Apply recursive categories as regular category tags
+  * Extend with arbitrary set of metadata-defined tags
+  * Generate free-standing index pages for each regular tag
+
 * Table of Contents support for markdown articles
   * Figure out a way to collect header jump links ahead of time
+    * Use Blaze to parse generated HTML and pick out <h*> tags?
   * Parse into an HTML navigation section,
     display in a right-side panel on sufficiently wide screens
     * Can probably inline into main content on narrow devices
