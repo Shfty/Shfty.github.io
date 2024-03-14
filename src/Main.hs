@@ -20,15 +20,16 @@ import System.FilePath
 import Text.Blaze.Html.Renderer.String
 import Text.Pandoc.Highlighting
 
+import Data.Aeson ((.:))
 import qualified Data.Aeson as JSON
+import Data.Aeson.Types (parseMaybe)
 import qualified Data.ByteString.Lazy as ByteString
 import qualified Data.Map
 import Data.Maybe
 import Hakyll.Commands (watch)
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
-import Data.Aeson.Types (parseMaybe)
-import Data.Aeson ((.:))
+import Text.Pandoc (runIOorExplode)
 
 --------------------------------------------------------------------------------
 -- Constants
@@ -87,8 +88,7 @@ categoryTemplate = "templates/category.html"
 
 cssTemplate = "css/main.scss"
 
-highlightStyleDefault = breezeDark
-highlightStyleJson = "style.json"
+highlightStyleDefault = "breezeDark"
 
 versionHeader = "header"
 versionSlug = "slug"
@@ -198,10 +198,13 @@ main = do
     hakyll $ do
         config <- getMetadata $ fromFilePath "config" :: Rules Metadata
 
-        -- TODO: Use this below, will likely need a refactor around monadic Maybe
         let highlightPath = parseMaybe (.: "highlightStyle") config :: Maybe String
 
-        pandocStyle <- tryLoadStyle highlightStyleDefault highlightStyleJson
+        pandocStyle <-
+            preprocess $
+                runIOorExplode $
+                    lookupHighlightingStyle (fromMaybe highlightStyleDefault highlightPath)
+
         let pandocCompiler' = pandocCompilerWithStyle pandocStyle
 
         sassHandling pandocStyle cssTemplate "css/**.scss"

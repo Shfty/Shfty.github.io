@@ -24,3 +24,6 @@ published: 2024-02-13
         but seems to enforce their writability -in case- they need to be written
       * Worth investigating to see if there's a mechanism
         for storing such data in a way that can be hot-reloaded
+  * Turns out that pandoc exports this functionality directly via lookupHighlightStyle,
+    but still needs to be bridged into Hakyll via the PandocIO typeclass;
+    i.e. by using a combination of hakyll `preprocess` and pandoc `runIO` / `runIOorExplode`
