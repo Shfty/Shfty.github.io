@@ -1,3 +1,39 @@
+* Contextual folding + current page highlight for sidebar menu
+  * Now the menu is being generated piecemeal by each page
+    in the site hierarchy, it should be more viable to drive
+    details elements' open attribute based on current URL
+    * Final menu is loaded from root index.html menuSection
+    * Nicest approach is probably to map over HTML nodes
+      during final page rendering, and apply an open attribute
+      if their data-url attribute is a substring of the underlying URL
+      * Should also strip data-url for cleanliness
+      * Prevents needing to render out multiple versions of
+        the same thing with minor changes
+      * Can use the same logic to apply a HTML ID to 
+        the currently-active menu entry for styling
+
+* Formalize Categories / Pages model
+  * Currently causing ex. 'Game Jam / Synth Rider' to display the wrong icon
+    * Displaying a dropdown is still desirable,
+      since images and other colocated assets should have their own
+      viewer pages generated
+  * Categories (index.html with sibling .html files)
+  * Branch Pages (index.html with no sibling .html files)
+  * Leaf Pages (non- index.html)
+
+* Page generation for asset files
+  * Images, videos, etc.
+  * Should remain within the TUI interface,
+    but show a full-panel viewer for the respective content
+    * Ideally, high-res images should be able to zoom to full size,
+      similar to the way a browser displays an image when loaded directly
+
+* Look into refactoring breadcrumb generation 
+  * Now the menu is being generated via dependency tree,
+    the file tree / ident tree structure is less useful
+  * Need to see if breadcrumbs can be generated in a more
+    Hakyll-idiomatic way, ultimately allowing the tree to be factored out
+
 * Sort menu links by icon metadata
   * Strictly should be by category, but icon is filling that role as-is
 
@@ -8,15 +44,6 @@
 * Move breadcrumb into a separate header line
   * Too wide for title position
   * Could integrate with page content as a vertical list on narrow screens?
-
-* Current page highlight for sidebar
-  * Should be able to style the link representing the active page
-
-* Contextual folding for sidebar
-  * Likely won't be able to do global state
-    without introducing cookies or HTML5 local storage
-  * Ergo, the next-nicest approach is to expand all directories
-    above the current file, and leave the rest closed
 
 * Support arbitrary extensions for pages in recursive hierarchy
   * Currently hardcoded to .md, should be an open set
@@ -39,8 +66,8 @@
   * Generate free-standing index pages for each regular tag
 
 * Table of Contents support for markdown articles
-  * Figure out a way to collect header jump links ahead of time
-    * Use Blaze to parse generated HTML and pick out <h*> tags?
+  * Can use Hakyll's withTags function to map over all tags
+    and collect data to drive a sidebar
   * Parse into an HTML navigation section,
     display in a right-side panel on sufficiently wide screens
     * Can probably inline into main content on narrow devices

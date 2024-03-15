@@ -106,7 +106,6 @@ highlightStyleDefault = "breezeDark"
 
 versionHeader = "header"
 versionSlug = "slug"
-versionMenu = "menu"
 versionBody = "body"
 
 --------------------------------------------------------------------------------
@@ -122,19 +121,21 @@ last' (a : as) = last' as
 applyFlexColumn = applyTernaryTemplate flexColumnTemplate
 applyFlexRow = applyTernaryTemplate flexRowTemplate
 
-applyLayoutTemplate :: FileTree (Identifier, Metadata) -> Context String -> Item String -> Compiler (Item String)
-applyLayoutTemplate metaTree ctx item = do
+applyLayoutTemplate :: Context String -> Item String -> Compiler (Item String)
+applyLayoutTemplate ctx item = do
     let ident = itemIdentifier item
 
-    let [identHeader, identBody, identMenu] =
+    let [identHeader, identBody] =
             flip setVersion ident . Just
                 <$> [ versionHeader
                     , versionBody
-                    , versionMenu
                     ]
 
     bodyHeader <- loadBody identHeader :: Compiler String
-    [body, menu] <- mapM load [identBody, identMenu] :: Compiler [Item String]
+    body <- load identBody :: Compiler (Item String)
+
+    menuBody <- loadBody (setVersion (Just "menuSection") (fromFilePath "pages/index.md"))
+    menu <- makeItem ("<nav>" ++ menuBody ++ "</nav>")
 
     menuHeader <- makeEmptyItem >>= loadAndApplyTemplate "templates/sidebar/header.html" ctx >>= return . itemBody :: Compiler String
     footer <- loadBody "footer.html"
@@ -190,13 +191,6 @@ makeIdentTree fileTree = do
     let fileTree' = uncurry (</>) . swap <$> tag fileTree
     let fileTree'' = filterFileTree (not . isIndex) fileTree'
     fromFilePath <$> indexBranches fileTree''
-
-makeMetaTree =
-    mapM
-        ( \a -> do
-            meta <- getMetadata a
-            return (a, meta)
-        )
 
 foldDetails (Branch a as) = H.details H.! A.open "" $ H.toHtml a <> mconcat (foldDetails <$> as)
 foldDetails (Leaf a) = H.toHtml a
@@ -268,6 +262,7 @@ prettyUrlField key =
             (toUrl . prettyUrl)
             <$> getRoute (setVersion Nothing item.itemIdentifier)
 
+prettifyUrls :: Item String -> Compiler (Item String)
 prettifyUrls = return . fmap (withUrls prettyUrl)
 
 main :: IO ()
@@ -291,6 +286,30 @@ main = do
         staticAssets
         pageAssets
 
+        match (recursivePagesPattern .&&. hasNoVersion) $ do
+            version "menuSection" $ do
+                route $ setExtension ".test.html"
+                compile $ do
+                    ident <- getUnderlying
+                    item <- loadBody $ setVersion (Just "slug") ident
+                    makeItem item >>= loadAndApplyTemplate "templates/link.html" siteCtx
+
+        match (recursiveCategoriesPattern .&&. hasNoVersion) $ do
+            version "menuSection" $ do
+                compile $ do
+                    ident <- getUnderlying
+                    let path = toFilePath ident
+                    let childPages = fromGlob (replaceFileName path "*.md") .&&. notIndexPattern
+                    let childCats = fromGlob $ replaceFileName path "*/index.md"
+                    let pat = (childPages .||. childCats) .&&. hasVersion "menuSection"
+                    ids <- getMatches pat :: Compiler [Identifier]
+                    this <- loadBody $ setVersion (Just "slug") ident :: Compiler String
+                    let children = loadAll $ fromList ids :: Compiler [Item String]
+                    let ctx = listField "children" postCtx children <> siteCtx
+                    makeItem this
+                        >>= loadAndApplyTemplate "templates/link.html" siteCtx
+                        >>= loadAndApplyTemplate "templates/menu-section.html" ctx
+
         -- wallpapers landscapeWallpaperPattern portraitWallpaperPattern
 
         -- Create tree structure
@@ -309,11 +328,7 @@ main = do
                 (Leaf a, Leaf b) -> compare a b
 
         let identTree = sortFileTreeBy pred identTree_
-
         -- error $ show identTree
-
-        metaTree <- makeMetaTree identTree
-        -- error $ show metaTree
 
         let breadcrumbs_ = makeBreadcrumbs [] identTree
         -- error $ mconcat $ intersperse "\n" $ show <$> breadcrumbs_
@@ -380,17 +395,7 @@ main = do
                     <> fieldMaybeIconColor "purple"
                     <> siteCtx
 
-        -- TODO:
-        -- \* Add a tag to the current page's menu entry so it can be highlighted
-        -- \* Lift foldDetails into Compiler monad so details tags
-        --   outside of the current breadcrumb can default to closed
         match (fromList $ routes identTree) $ do
-            -- Menu panel
-            version versionMenu $ do
-                compile $ do
-                    menuTree metaTree
-                        >>= makeItem . renderHtml . H.nav . foldDetails
-
             -- Header line
             version versionHeader $ do
                 compile $ do
@@ -400,9 +405,8 @@ main = do
             route recursiveRoute
             compile $
                 makeEmptyItem
-                    >>= applyLayoutTemplate metaTree pageCtx
+                    >>= applyLayoutTemplate pageCtx
                     >>= relativizeUrls
-                    >>= prettifyUrls
 
         --- Specialized compilers
         let providers =

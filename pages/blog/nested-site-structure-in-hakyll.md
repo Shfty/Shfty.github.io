@@ -39,3 +39,16 @@ published: 2024-02-13
     the generated data is a tree, and the problem is ostensibly modeled on a tree,
     so using an actual tree - while remaining friendly to Hakyll - is an elegant solution
     * Emulating via tags is nice, but felt like it was being stretched too far.
+
+### Tying the knot
+  * Ultimately realized that Hakyll is perfectly capable of representing
+    this kind of structure via pattern matching
+  * Implemented a compiler that generates a simple icon + title
+    "slug" version of each page
+  * Implemented another "menuSection" compiler that
+    * For leaf pages, passes through the slug
+    * For branch pages, generates a details element containing its slug,
+      and a list of "menuSection" versions of its immediate children
+    * Since each menuSection either depends on nothing or its immediate children,
+      there are no dependency conflicts, and Hakyll is able to resolve them
+      from the bottom upwards

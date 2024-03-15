@@ -21,6 +21,8 @@ details {
 nav details > :not(summary):not(details) {
     margin-left: 4ch;
     display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 nav details {
@@ -33,6 +35,8 @@ nav > details {
 
 nav summary {
     list-style-type: None;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 nav details[open] > summary::before {

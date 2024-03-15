@@ -35,22 +35,6 @@ instance Applicative FileTree where
         let as'' = uncurry (<*>) <$> as'
         Branch (f a) as''
 
-menuTree :: FileTree (Identifier, Metadata) -> Compiler (FileTree H.Html)
-menuTree a = do
-    case a of
-        (Branch (id, meta) as) -> do
-            route <- getRoute id
-            let route' = fromMaybe (error "No route") route
-            slug <- loadBody $ setVersion (Just "slug") id :: Compiler String
-            let html = H.summary $ H.a H.! A.href (H.toValue $ "/" ++ route') $ H.preEscapedString slug
-            as' <- mapM menuTree as
-            mapM menuTree as >>= return . Branch html
-        (Leaf (id, meta)) -> do
-            route <- getRoute id
-            let route' = fromMaybe (error "No route") route
-            slug <- loadBody $ setVersion (Just "slug") id :: Compiler String
-            return $ Leaf $ H.a H.! A.href (H.toValue $ "/" ++ route') $ H.preEscapedString slug
-
 tag :: FileTree FilePath -> FileTree (FilePath, FilePath)
 tag tree = evalState (tagStep tree) mempty
 
