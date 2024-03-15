@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 import Data.FileTree
@@ -14,28 +15,35 @@ import Control.Monad
 import Data.Function
 import Data.Text (splitOn, strip)
 import Data.Tuple
+import System.Directory (doesFileExist)
 import System.FilePath
 import Text.Blaze.Html.Renderer.String
 import Text.Pandoc.Highlighting
 
-import qualified Network.Wai.Application.Static as Static
+import Network.Mime (defaultMimeLookup)
+import Network.Wai.Application.Static (
+    StaticSettings (ssGetMimeType, ssLookupFile),
+    defaultFileServerSettings,
+ )
+import WaiAppStatic.Types (fileName, fromPiece, unsafeToPiece)
 
 import Data.Aeson ((.:))
 import qualified Data.Aeson as JSON
 import Data.Aeson.Types (parseMaybe)
 import Data.Bifunctor
 import qualified Data.ByteString.Lazy as ByteString
-import Data.List (intersperse)
+import Data.List (intersperse, isInfixOf, isPrefixOf)
 import Data.Map (toList)
 import qualified Data.Map
 import Data.Maybe
 import qualified Data.Text as Text
+import Data.Text.Conversions (fromText)
 import Hakyll.Commands (watch)
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 import Text.Pandoc (runIOorExplode)
+import Text.Pandoc.MIME (MimeType)
 import Text.Pandoc.Options (WriterOptions (writerHighlightStyle))
-import WaiAppStatic.Types (fileName, fromPiece)
 
 --------------------------------------------------------------------------------
 -- Constants
@@ -153,9 +161,12 @@ pageAssets = match pageAssetPattern $ do
     route parentRoute
     compile copyFileCompiler
 
+-- Base Context
+siteCtx = prettyUrlField "url" <> defaultContext
+
 -- Post Context
 postCtx :: Context String
-postCtx = dateField "date" "%B %e, %Y" `mappend` defaultContext
+postCtx = dateField "date" "%B %e, %Y" `mappend` siteCtx
 
 -- Templates
 templates = match templatePattern $ compile templateBodyCompiler
@@ -167,7 +178,7 @@ parentRoute =
             <*> joinPath . drop 1 . splitPath . takeDirectory
             <$> toFilePath
 
-recursiveRoute = composeRoutes (setExtension "") parentRoute
+recursiveRoute = composeRoutes (setExtension "html") parentRoute
 
 makeIdentTree fileTree = do
     let isIndex = (== "index") . takeBaseName
@@ -202,19 +213,6 @@ makeBreadcrumbs :: [Identifier] -> FileTree Identifier -> [(Identifier, [Identif
 makeBreadcrumbs acc (Branch a as) = [(a, acc)] <> mconcat (makeBreadcrumbs (acc <> [a]) <$> as)
 makeBreadcrumbs acc (Leaf a) = [(a, acc)]
 
-serverSettings :: FilePath -> Static.StaticSettings
-serverSettings path = baseSettings{Static.ssGetMimeType = getMimeType}
-  where
-    baseSettings = Static.defaultFileServerSettings path
-    defaultGetMimeType = Static.ssGetMimeType baseSettings
-
-    -- Overrides MIME type for files with no extension
-    -- so that HTML pages need no extension.
-    getMimeType file =
-        if Text.elem '.' (fromPiece $ fileName file)
-            then defaultGetMimeType file
-            else return "text/html"
-
 -- Create a pandoc compiler with the provided highlight style
 pandocCompilerWithStyle style =
     pandocCompilerWith
@@ -223,11 +221,59 @@ pandocCompilerWithStyle style =
             { writerHighlightStyle = Just style
             }
 
+-- Custom Hakyll configuration
+-- Emulates the server config of GitHub Pages
+makeConfig config =
+    config
+        { previewSettings = \path ->
+            let settings = config.previewSettings path
+             in settings
+                    { ssLookupFile = \pieces ->
+                        case splitAt (length pieces - 1) pieces of
+                            (prefix, [piece]) -> do
+                                let fileName = fromPiece piece
+                                if takeExtension (fromText fileName) == ""
+                                    then settings.ssLookupFile $ prefix <> [unsafeToPiece $ fileName <> ".html"]
+                                    else settings.ssLookupFile pieces
+                            _otherwise -> settings.ssLookupFile pieces
+                    , ssGetMimeType = \file ->
+                        if takeExtension (Text.unpack (fromPiece file.fileName)) == ""
+                            then do
+                                htmlExists <- doesFileExist $ path </> Text.unpack (fromPiece file.fileName) <.> "html"
+                                if htmlExists
+                                    then pure "text/html"
+                                    else settings.ssGetMimeType file
+                            else settings.ssGetMimeType file
+                    }
+        }
+
+prettyUrl :: String -> String
+prettyUrl url = do
+    let isLocal = "/" `isPrefixOf` url || not ("://" `isInfixOf` url)
+    if isLocal
+        then
+            if takeFileName url == "index.html"
+                then dropFileName url
+                else
+                    if takeExtension url == ".html"
+                        then dropExtension url
+                        else url
+        else url
+
+prettyUrlField :: String -> Context a
+prettyUrlField key =
+    field key $ \item ->
+        maybe
+            (fail $ "no route url found for item " ++ show item.itemIdentifier)
+            (toUrl . prettyUrl)
+            <$> getRoute (setVersion Nothing item.itemIdentifier)
+
+prettifyUrls = return . fmap (withUrls prettyUrl)
+
 main :: IO ()
 main = do
-    let config = defaultConfiguration{previewSettings = serverSettings}
     -- Hakyll composition
-    hakyllWith config $ do
+    hakyllWith (makeConfig defaultConfiguration) $ do
         config <- getMetadata $ fromFilePath "config" :: Rules Metadata
 
         let highlightPath = parseMaybe (.: "highlightStyle") config :: Maybe String
@@ -295,20 +341,6 @@ main = do
         -- Compile footer
         match "footer.html" $ compile getResourceBody
 
-        -- Compile headers, menus
-        let slugCtx =
-                field
-                    "url"
-                    ( return
-                        . flip replaceExtension "html"
-                        . ("/" ++)
-                        . joinPath
-                        . tail
-                        . splitDirectories
-                        . toFilePath
-                        . itemIdentifier
-                    )
-
         let fieldMaybeIcon def =
                 field
                     "icon"
@@ -330,15 +362,15 @@ main = do
         let pageCtx =
                 fieldMaybeIcon "file"
                     <> fieldMaybeIconColor "white"
-                    <> defaultContext
+                    <> siteCtx
 
         let breadcrumbCtx =
                 listFieldWith
                     "breadcrumb"
-                    (slugCtx <> pageCtx)
+                    pageCtx
                     ( \a -> do
                         let id = setVersion Nothing $ itemIdentifier a
-                        let ids = fromMaybe (error $ "No breadcrumb entry for " ++ show id) $ Data.Map.lookup id breadcrumbs
+                        let ids = fromMaybe (fail $ "No breadcrumb entry for " ++ show id) $ Data.Map.lookup id breadcrumbs
                         let ids' = setVersion (Just "slug") <$> ids
                         mapM load ids' :: Compiler [Item String]
                     )
@@ -346,27 +378,31 @@ main = do
         let categoryCtx =
                 fieldMaybeIcon "custom-folder"
                     <> fieldMaybeIconColor "purple"
-                    <> defaultContext
+                    <> siteCtx
 
         -- TODO:
         -- \* Add a tag to the current page's menu entry so it can be highlighted
         -- \* Lift foldDetails into Compiler monad so details tags
         --   outside of the current breadcrumb can default to closed
         match (fromList $ routes identTree) $ do
+            -- Menu panel
             version versionMenu $ do
                 compile $ do
                     menuTree metaTree
                         >>= makeItem . renderHtml . H.nav . foldDetails
 
+            -- Header line
             version versionHeader $ do
                 compile $ do
                     makeEmptyItem >>= loadAndApplyTemplate headerTemplate (breadcrumbCtx <> pageCtx)
 
+            -- Main page
             route recursiveRoute
             compile $
                 makeEmptyItem
                     >>= applyLayoutTemplate metaTree pageCtx
                     >>= relativizeUrls
+                    >>= prettifyUrls
 
         --- Specialized compilers
         let providers =
@@ -374,7 +410,7 @@ main = do
                     & withCompiler "None" getResourceBody
                     & withCompiler "Default" pandocCompiler'
                     & withCompiler "pandoc" pandocCompiler'
-                    & withContext "None" defaultContext
+                    & withContext "None" siteCtx
 
         let spec a b c = CompilerSpec providers $ CompilerDefaults a b c
 
@@ -390,7 +426,7 @@ main = do
 
             version versionSlug $
                 compile $
-                    slugCompiler (slugCtx <> pageCtx)
+                    slugCompiler pageCtx
 
         -- Compile categories
         let bodyCompiler = do
@@ -415,4 +451,4 @@ main = do
 
             version versionSlug $ do
                 compile $
-                    slugCompiler (slugCtx <> categoryCtx)
+                    slugCompiler categoryCtx

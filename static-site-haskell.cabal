@@ -28,10 +28,12 @@ executable site
     , blaze-markup
     , bytestring
     , containers
+    , directory
     , filepath
     , hakyll
     , hakyll-images
     , hakyll-sass
+    , mime-types
     , monad-loops
     , mtl
     , pandoc
