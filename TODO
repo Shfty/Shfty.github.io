@@ -1,10 +1,22 @@
+* Clean up unused code
+  * Breadcrumbs
+  * Highlighting
+  * Tags
+
 * Clean URLs
   * Now using extensionless URLs, but need to strip index,
-    and ensure all URLs are properly handled
+    and ensure all URLs are properly transformed
     (ex. currently-broken breadcrumb URLs)
   * https://chungyc.org/article/technical/website/extensionless
   * May need a separate fixup procedure for deployment to GitHub Pages,
     as it doesn't support .htaccess, but does support extensionless URLs
+
+* Sort menu links by icon metadata
+  * Strictly should be by category, but icon is filling that role as-is
+
+* Full-width category links for menu
+
+* Fix tux icon spacing
 
 * Move breadcrumb into a separate header line
   * Too wide for title position

@@ -5,9 +5,7 @@ import Data.FileTree
 import qualified Data.Tree as T
 
 import Hakyll
-import Hakyll.Breadcrumb
 import Hakyll.Compiler.Overridable
-import Hakyll.Highlighting
 import Hakyll.Layout
 import Hakyll.Sass
 import Hakyll.Wallpaper
@@ -36,6 +34,7 @@ import Hakyll.Commands (watch)
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 import Text.Pandoc (runIOorExplode)
+import Text.Pandoc.Options (WriterOptions (writerHighlightStyle))
 import WaiAppStatic.Types (fileName, fromPiece)
 
 --------------------------------------------------------------------------------
@@ -215,6 +214,14 @@ serverSettings path = baseSettings{Static.ssGetMimeType = getMimeType}
         if Text.elem '.' (fromPiece $ fileName file)
             then defaultGetMimeType file
             else return "text/html"
+
+-- Create a pandoc compiler with the provided highlight style
+pandocCompilerWithStyle style =
+    pandocCompilerWith
+        defaultHakyllReaderOptions
+        defaultHakyllWriterOptions
+            { writerHighlightStyle = Just style
+            }
 
 main :: IO ()
 main = do

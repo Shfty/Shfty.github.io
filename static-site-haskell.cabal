@@ -13,16 +13,13 @@ executable site
   other-modules:
       Data.FileTree
       Hakyll.Compiler.Overridable
-      Hakyll.Breadcrumb
-      Hakyll.Highlighting
       Hakyll.Glyphs
       Hakyll.Layout
       Hakyll.Sass
-      Hakyll.Tags
       Hakyll.Wallpaper
   hs-source-dirs:
       src
-  ghc-options: -threaded
+  ghc-options: -threaded -with-rtsopts=-N
   build-depends:
       MissingH
     , aeson
