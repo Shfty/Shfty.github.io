@@ -4,7 +4,8 @@
   --glyph-right-soft-divider: "";
   --glyph-left-soft-divider: "";
   --glyph-linux-tux: " ";
-  --glyph-language-markdown: " ";
+  --glyph-markdown: " ";
+  --glyph-html: "󰌝 ";
   --glyph-branch: "";
   --glyph-custom-folder: " ";
   --glyph-file: "󰈔 ";
@@ -47,6 +48,8 @@
   --glyph-contact: "󰛋 ";
   --glyph-lightning-bolt: "󱐋";
   --glyph-window-maximize: "󰖯 ";
+  --glyph-image: "󰋩 ";
+  --glyph-video: "󰕧 ";
 }
 
 x-glyph {
@@ -73,8 +76,12 @@ x-glyph[type="linux-tux"]::before {
     content: var(--glyph-linux-tux);
 }
 
-x-glyph[type="language-markdown"]::before {
-    content: var(--glyph-language-markdown);
+x-glyph[type="markdown"]::before {
+    content: var(--glyph-markdown);
+}
+
+x-glyph[type="html"]::before {
+    content: var(--glyph-html);
 }
 
 x-glyph[type="branch"]::before {
@@ -248,4 +255,12 @@ x-glyph[type="lightning-bolt"]::before {
 
 x-glyph[type="window-maximize"]::before {
     content: var(--glyph-window-maximize);
+}
+
+x-glyph[type="image"]::before {
+    content: var(--glyph-image);
+}
+
+x-glyph[type="video"]::before {
+    content: var(--glyph-video);
 }

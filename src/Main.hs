@@ -18,6 +18,7 @@ import Data.Tuple
 import System.Directory (doesFileExist)
 import System.FilePath
 import Text.Blaze.Html.Renderer.String
+import Text.HTML.TagSoup
 import Text.Pandoc.Highlighting
 
 import Network.Mime (defaultMimeLookup)
@@ -32,7 +33,7 @@ import qualified Data.Aeson as JSON
 import Data.Aeson.Types (parseMaybe)
 import Data.Bifunctor
 import qualified Data.ByteString.Lazy as ByteString
-import Data.List (intersperse, isInfixOf, isPrefixOf)
+import Data.List (intersperse, isInfixOf, isPrefixOf, isSuffixOf, sortBy)
 import Data.Map (toList)
 import qualified Data.Map
 import Data.Maybe
@@ -62,6 +63,7 @@ imagePattern = imagesPattern .&&. notWallpaperPattern
 staticAssetPattern =
     imagePattern
         .||. "images/**.png"
+        .||. "images/**.jpg"
         .||. "images/**.jpeg"
         .||. "images/**.gif"
         .||. "images/**.mkv"
@@ -71,41 +73,49 @@ staticAssetPattern =
 pageAssetPattern =
     "pages/**.png"
         .||. "pages/**.jpg"
+        .||. "pages/**.jpeg"
         .||. "pages/**.gif"
         .||. "pages/**.mkv"
 
 metadataPattern = "**.metadata"
-imageAssetPattern = "**.png" .||. "**.jpg" .||. "**.gif"
-videoAssetPattern = "**.mkv" .||. "**.mp4"
+notMetadataPattern = complement metadataPattern
 
-assetPattern = metadataPattern .||. imageAssetPattern .||. videoAssetPattern
+imageAssetPattern = "**.png" .||. "**.jpeg" .||. "**.jpg" .||. "**.gif"
+videoAssetPattern = "**.mkv" .||. "**.mp4" .||. "**.webm"
+
+assetPattern = imageAssetPattern .||. videoAssetPattern
 notAssetPattern = complement assetPattern
 
-recursivePattern = "pages/**" .&&. notAssetPattern
+basePattern = "pages/**"
+
 indexPattern = "**index.*"
 notIndexPattern = complement indexPattern
-recursiveCategoriesPattern = recursivePattern .&&. indexPattern
-recursivePagesPattern = recursivePattern .&&. notIndexPattern
+
+categoriesPattern = basePattern .&&. indexPattern
+pagesPattern = basePattern .&&. notIndexPattern .&&. notAssetPattern .&&. notMetadataPattern
 
 templatePattern = "templates/**.html"
 
 documentTemplate = "templates/document.html"
 footerTemplate = "templates/footer.html"
 headerTemplate = "templates/content/header.html"
+imageTemplate = "templates/image.html"
+videoTemplate = "templates/video.html"
 slugTemplate = "templates/slug.html"
 flexColumnTemplate = "templates/flex-column.html"
 flexRowTemplate = "templates/flex-row.html"
 flexScrollTemplate = "templates/flex-scroll.html"
 
-postTemplate = "templates/post.html"
+pageTemplate = "templates/post.html"
 categoryTemplate = "templates/category.html"
 
 cssTemplate = "css/main.scss"
 
 highlightStyleDefault = "breezeDark"
 
-versionHeader = "header"
 versionSlug = "slug"
+versionMenuSection = "menuSection"
+versionHeader = "header"
 versionBody = "body"
 
 --------------------------------------------------------------------------------
@@ -121,21 +131,47 @@ last' (a : as) = last' as
 applyFlexColumn = applyTernaryTemplate flexColumnTemplate
 applyFlexRow = applyTernaryTemplate flexRowTemplate
 
+collapseMenu :: String -> Tag String -> Tag String
+collapseMenu url a = case a of
+    TagOpen a as -> do
+        let as' = Data.Map.fromList as
+        case Data.Map.lookup "data-url" as' of
+            Just dataUrl -> do
+                let withAttr k v =
+                        if dataUrl == "/./" || dataUrl `isPrefixOf` ("/" ++ url)
+                            then Data.Map.insert k v
+                            else id
+                TagOpen a
+                    $ Data.Map.toList
+                    $ Data.Map.delete "data-url"
+                    $ ( case a of
+                            "details" -> withAttr "open" ""
+                            "summary" -> withAttr "id" "active"
+                            "a" -> withAttr "id" "active"
+                            _otherwise -> id
+                      )
+                    $ as'
+            _otherwise -> TagOpen a as
+    _otherwise -> a
+
 applyLayoutTemplate :: Context String -> Item String -> Compiler (Item String)
 applyLayoutTemplate ctx item = do
     let ident = itemIdentifier item
 
-    let [identHeader, identBody] =
+    route <- getRoute $ setVersion Nothing ident
+    let route' = fromMaybe (fail ("No route for " ++ show ident)) route
+
+    let [identHeader] =
             flip setVersion ident . Just
-                <$> [ versionHeader
-                    , versionBody
-                    ]
+                <$> [versionHeader]
 
     bodyHeader <- loadBody identHeader :: Compiler String
-    body <- load identBody :: Compiler (Item String)
 
-    menuBody <- loadBody (setVersion (Just "menuSection") (fromFilePath "pages/index.md"))
-    menu <- makeItem ("<nav>" ++ menuBody ++ "</nav>")
+    menuBody <- loadBody (setVersion (Just versionMenuSection) (fromFilePath "pages/index.md"))
+
+    let menuBody' = withTags (collapseMenu route') menuBody
+
+    menu <- makeItem ("<nav>" ++ menuBody' ++ "</nav>")
 
     menuHeader <- makeEmptyItem >>= loadAndApplyTemplate "templates/sidebar/header.html" ctx >>= return . itemBody :: Compiler String
     footer <- loadBody "footer.html"
@@ -144,7 +180,7 @@ applyLayoutTemplate ctx item = do
             loadAndApplyTemplate flexScrollTemplate scrollCtx
                 >=> applyFlexColumn header footer columnCtx
 
-    body' <- panel (Just bodyHeader) Nothing ctx (constField "class" "body" <> ctx) body
+    body' <- panel (Just bodyHeader) Nothing ctx (constField "class" "body" <> ctx) item
     menu' <- panel (Just menuHeader) Nothing ctx (constField "class" "menu divider-right" <> ctx) menu
 
     makeItem (itemBody body')
@@ -157,13 +193,28 @@ staticAssets = match staticAssetPattern $ do
     route idRoute
     compile copyFileCompiler
 
--- Colocated page assets
-pageAssets = match pageAssetPattern $ do
-    route parentRoute
-    compile copyFileCompiler
+-- Filetype context field
+filetypeField =
+    field
+        "filetype"
+        ( \item -> do
+            let ident = itemIdentifier item
+            let path = toFilePath ident
+            return $ case takeExtension path of
+                ".md" -> "markdown"
+                ".html" -> "html"
+                ".png" -> "image"
+                ".jpg" -> "image"
+                ".jpeg" -> "image"
+                ".gif" -> "image"
+                ".mkv" -> "video"
+                ".mpv" -> "video"
+                ".webm" -> "video"
+                _ -> fail "Unknown extension"
+        )
 
 -- Base Context
-siteCtx = prettyUrlField "url" <> defaultContext
+siteCtx = prettyUrlField "url" <> filetypeField <> defaultContext
 
 -- Post Context
 postCtx :: Context String
@@ -179,7 +230,7 @@ parentRoute =
             <*> joinPath . drop 1 . splitPath . takeDirectory
             <$> toFilePath
 
-recursiveRoute = composeRoutes (setExtension "html") parentRoute
+baseRoute = composeRoutes (setExtension "html") parentRoute
 
 makeIdentTree fileTree = do
     let isIndex = (== "index") . takeBaseName
@@ -197,11 +248,32 @@ foldDetails (Leaf a) = H.toHtml a
 
 makeEmptyItem = makeItem ""
 
-slugCompiler ctx =
+fieldMaybeIcon def =
+    field
+        "icon"
+        ( \a -> do
+            let id = itemIdentifier a
+            icon <- getMetadataField id "icon"
+            return $ fromMaybe def icon
+        )
+
+fieldMaybeIconColor def =
+    field
+        "icon-color"
+        ( \a -> do
+            let id = itemIdentifier a
+            color <- getMetadataField id "icon-color"
+            return $ fromMaybe def color
+        )
+
+slugCompiler icon color ctx =
     makeEmptyItem
         >>= loadAndApplyTemplate
             slugTemplate
-            ctx
+            ( fieldMaybeIcon icon
+                <> fieldMaybeIconColor color
+                <> ctx
+            )
 
 makeBreadcrumbs :: [Identifier] -> FileTree Identifier -> [(Identifier, [Identifier])]
 makeBreadcrumbs acc (Branch a as) = [(a, acc)] <> mconcat (makeBreadcrumbs (acc <> [a]) <$> as)
@@ -284,31 +356,14 @@ main = do
 
         templates
         staticAssets
-        pageAssets
 
-        match (recursivePagesPattern .&&. hasNoVersion) $ do
-            version "menuSection" $ do
-                route $ setExtension ".test.html"
-                compile $ do
-                    ident <- getUnderlying
-                    item <- loadBody $ setVersion (Just "slug") ident
-                    makeItem item >>= loadAndApplyTemplate "templates/link.html" siteCtx
+        -- Contices
+        let imageSlugCompiler = slugCompiler "image" "white"
+        let videoSlugCompiler = slugCompiler "video" "white"
+        let pageSlugCompiler = slugCompiler "file" "white"
+        let categorySlugCompiler = slugCompiler "custom-folder" "purple"
 
-        match (recursiveCategoriesPattern .&&. hasNoVersion) $ do
-            version "menuSection" $ do
-                compile $ do
-                    ident <- getUnderlying
-                    let path = toFilePath ident
-                    let childPages = fromGlob (replaceFileName path "*.md") .&&. notIndexPattern
-                    let childCats = fromGlob $ replaceFileName path "*/index.md"
-                    let pat = (childPages .||. childCats) .&&. hasVersion "menuSection"
-                    ids <- getMatches pat :: Compiler [Identifier]
-                    this <- loadBody $ setVersion (Just "slug") ident :: Compiler String
-                    let children = loadAll $ fromList ids :: Compiler [Item String]
-                    let ctx = listField "children" postCtx children <> siteCtx
-                    makeItem this
-                        >>= loadAndApplyTemplate "templates/link.html" siteCtx
-                        >>= loadAndApplyTemplate "templates/menu-section.html" ctx
+        -- Tree / Breadcrumb Data
 
         -- wallpapers landscapeWallpaperPattern portraitWallpaperPattern
 
@@ -335,6 +390,101 @@ main = do
 
         let breadcrumbs = Data.Map.fromList breadcrumbs_
 
+        let breadcrumbCtx =
+                listFieldWith
+                    "breadcrumb"
+                    siteCtx
+                    ( \a -> do
+                        let id = setVersion Nothing $ itemIdentifier a
+                        let ids = fromMaybe (fail $ "No breadcrumb entry for " ++ show id) $ Data.Map.lookup id breadcrumbs
+                        let ids' = setVersion (Just "slug") <$> ids
+                        mapM load ids' :: Compiler [Item String]
+                    )
+
+        -- Baseline compilation
+        match (basePattern .&&. imageAssetPattern .&&. hasNoVersion) $ do
+            version versionSlug $
+                compile $
+                    imageSlugCompiler siteCtx
+
+            version versionMenuSection $ do
+                compile $ do
+                    ident <- getUnderlying
+                    item <- loadBody $ setVersion (Just "slug") ident
+                    makeItem item >>= loadAndApplyTemplate "templates/link.html" siteCtx
+
+            version versionHeader $ do
+                compile $ do
+                    makeEmptyItem >>= loadAndApplyTemplate headerTemplate (breadcrumbCtx <> siteCtx)
+        
+            version "image" $ do
+                route parentRoute
+                compile copyFileCompiler
+            
+            route baseRoute
+            compile $
+                makeEmptyItem
+                    >>= loadAndApplyTemplate imageTemplate (mapContextBy (== "path") (\a -> "/" ++ (joinPath $ tail $ splitDirectories a)) siteCtx)
+                    >>= applyLayoutTemplate siteCtx
+                    >>= relativizeUrls
+
+        match (basePattern .&&. videoAssetPattern .&&. hasNoVersion) $ do
+            version versionSlug $
+                compile $
+                    videoSlugCompiler siteCtx
+
+            version versionMenuSection $ do
+                compile $ do
+                    ident <- getUnderlying
+                    item <- loadBody $ setVersion (Just "slug") ident
+                    makeItem item >>= loadAndApplyTemplate "templates/link.html" siteCtx
+
+            version versionHeader $ do
+                compile $ do
+                    makeEmptyItem >>= loadAndApplyTemplate headerTemplate (breadcrumbCtx <> siteCtx)
+
+            version "video" $ do
+                route parentRoute
+                compile copyFileCompiler
+            
+            route baseRoute
+            compile $
+                makeEmptyItem
+                    >>= loadAndApplyTemplate videoTemplate (mapContextBy (== "path") (\a -> "/" ++ (joinPath $ tail $ splitDirectories a)) siteCtx)
+                    >>= applyLayoutTemplate siteCtx
+                    >>= relativizeUrls
+
+        match (pagesPattern .&&. hasNoVersion) $ do
+            version versionSlug $
+                compile $
+                    pageSlugCompiler siteCtx
+
+            version versionMenuSection $ do
+                compile $ do
+                    ident <- getUnderlying
+                    item <- loadBody $ setVersion (Just "slug") ident
+                    makeItem item >>= loadAndApplyTemplate "templates/link.html" siteCtx
+
+        match (categoriesPattern .&&. hasNoVersion) $ do
+            version versionSlug $
+                compile $
+                    categorySlugCompiler siteCtx
+
+            version versionMenuSection $ do
+                compile $ do
+                    ident <- getUnderlying
+                    let path = toFilePath ident
+                    let childPages = fromGlob (replaceFileName path "*.*") .&&. notIndexPattern
+                    let childCats = fromGlob $ replaceFileName path "*/index.*"
+                    let pat = (childPages .||. childCats) .&&. hasVersion versionMenuSection
+                    ids <- getMatches pat :: Compiler [Identifier]
+                    this <- loadBody $ setVersion (Just "slug") ident :: Compiler String
+                    let children = loadAll (fromList ids) >>= sortPosts :: Compiler [Item String]
+                    let ctx = listField "children" postCtx children <> siteCtx
+                    makeItem this
+                        >>= loadAndApplyTemplate "templates/link.html" siteCtx
+                        >>= loadAndApplyTemplate "templates/menu-section.html" ctx
+
         -- Compilation
         let routes a = case a of
                 Branch a as -> [a] <> concatMap routes as
@@ -356,56 +506,18 @@ main = do
         -- Compile footer
         match "footer.html" $ compile getResourceBody
 
-        let fieldMaybeIcon def =
-                field
-                    "icon"
-                    ( \a -> do
-                        let id = itemIdentifier a
-                        icon <- getMetadataField id "icon"
-                        return $ fromMaybe def icon
-                    )
-
-        let fieldMaybeIconColor def =
-                field
-                    "icon-color"
-                    ( \a -> do
-                        let id = itemIdentifier a
-                        color <- getMetadataField id "icon-color"
-                        return $ fromMaybe def color
-                    )
-
-        let pageCtx =
-                fieldMaybeIcon "file"
-                    <> fieldMaybeIconColor "white"
-                    <> siteCtx
-
-        let breadcrumbCtx =
-                listFieldWith
-                    "breadcrumb"
-                    pageCtx
-                    ( \a -> do
-                        let id = setVersion Nothing $ itemIdentifier a
-                        let ids = fromMaybe (fail $ "No breadcrumb entry for " ++ show id) $ Data.Map.lookup id breadcrumbs
-                        let ids' = setVersion (Just "slug") <$> ids
-                        mapM load ids' :: Compiler [Item String]
-                    )
-
-        let categoryCtx =
-                fieldMaybeIcon "custom-folder"
-                    <> fieldMaybeIconColor "purple"
-                    <> siteCtx
-
-        match (fromList $ routes identTree) $ do
+        match ((fromList $ routes identTree) .&&. hasNoVersion) $ do
             -- Header line
             version versionHeader $ do
                 compile $ do
-                    makeEmptyItem >>= loadAndApplyTemplate headerTemplate (breadcrumbCtx <> pageCtx)
+                    makeEmptyItem >>= loadAndApplyTemplate headerTemplate (breadcrumbCtx <> siteCtx)
 
-            -- Main page
-            route recursiveRoute
-            compile $
-                makeEmptyItem
-                    >>= applyLayoutTemplate pageCtx
+            -- Final page
+            route baseRoute
+            compile $ do
+                ident <- getUnderlying
+                load (setVersion (Just versionBody) ident)
+                    >>= applyLayoutTemplate siteCtx
                     >>= relativizeUrls
 
         --- Specialized compilers
@@ -421,16 +533,12 @@ main = do
         let categories' = Data.Map.fromList $ categories identTree
 
         -- Compile pages
-        let pageSpec = spec pandocCompiler' pageCtx postTemplate
+        let pageSpec = spec pandocCompiler' siteCtx pageTemplate
 
-        match (fromList $ pages identTree) $ do
+        match ((fromList $ pages identTree) .&&. hasNoVersion) $ do
             version versionBody $ do
                 compile $
                     overridableCompiler pageSpec
-
-            version versionSlug $
-                compile $
-                    slugCompiler pageCtx
 
         -- Compile categories
         let bodyCompiler = do
@@ -439,20 +547,47 @@ main = do
                 let pat = fromList $ fromMaybe mempty $ Data.Map.lookup ident' categories'
 
                 let catDefaults = CompilerDefaults
+
+                let posts = loadAll pat >>= sortPosts
                 let catSpec =
                         spec
                             pandocCompiler'
-                            ( listField "posts" postCtx (loadAll pat)
-                                <> categoryCtx
+                            ( listField "posts" postCtx posts
+                                <> siteCtx
                             )
                             categoryTemplate
 
                 overridableCompiler catSpec
 
-        match (fromList $ Data.Map.keys categories') $ do
+        match ((fromList $ Data.Map.keys categories') .&&. hasNoVersion) $ do
             version versionBody $ do
                 compile bodyCompiler
 
-            version versionSlug $ do
-                compile $
-                    slugCompiler categoryCtx
+sortPosts :: [Item String] -> Compiler [Item String]
+sortPosts posts = do
+    postMeta <-
+        mapM
+            ( \a -> do
+                let ident = itemIdentifier a
+                meta <- getMetadata ident
+                route <- getRoute ident
+                return (a, meta, fromMaybe (fail "No route for " ++ show ident) route)
+            )
+            posts
+    return $
+        ( fmap (\(a, b, c) -> a)
+            . sortBy
+                ( \(a, am, ar) (b, bm, br) -> do
+                    compare ("/index." `isInfixOf` br) ("/index." `isInfixOf` ar)
+                )
+            . sortBy
+                ( \(a, am, ar) (b, bm, br) -> do
+                    let icon = lookupString "icon"
+                    compare (icon am) (icon bm)
+                )
+            . sortBy
+                ( \(a, am, ar) (b, bm, br) -> do
+                    compare a.itemIdentifier b.itemIdentifier
+                )
+        )
+            postMeta

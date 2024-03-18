@@ -1,16 +1,13 @@
-* Contextual folding + current page highlight for sidebar menu
-  * Now the menu is being generated piecemeal by each page
-    in the site hierarchy, it should be more viable to drive
-    details elements' open attribute based on current URL
-    * Final menu is loaded from root index.html menuSection
-    * Nicest approach is probably to map over HTML nodes
-      during final page rendering, and apply an open attribute
-      if their data-url attribute is a substring of the underlying URL
-      * Should also strip data-url for cleanliness
-      * Prevents needing to render out multiple versions of
-        the same thing with minor changes
-      * Can use the same logic to apply a HTML ID to 
-        the currently-active menu entry for styling
+* Styling for image / video viewers
+  * Should be able to use CSS contain / cover
+  * Would also be nice to provide CSS click-to-zoom for high-res images
+
+* Item-based embedding for image and video assets
+  * Can use metadata to separate image viewer content (subtitle, etc)
+    from main page content, inline automatically
+
+* Sort menu links by icon metadata
+  * Strictly should be by category, but icon is filling that role as-is
 
 * Formalize Categories / Pages model
   * Currently causing ex. 'Game Jam / Synth Rider' to display the wrong icon
@@ -21,21 +18,11 @@
   * Branch Pages (index.html with no sibling .html files)
   * Leaf Pages (non- index.html)
 
-* Page generation for asset files
-  * Images, videos, etc.
-  * Should remain within the TUI interface,
-    but show a full-panel viewer for the respective content
-    * Ideally, high-res images should be able to zoom to full size,
-      similar to the way a browser displays an image when loaded directly
-
 * Look into refactoring breadcrumb generation 
   * Now the menu is being generated via dependency tree,
     the file tree / ident tree structure is less useful
   * Need to see if breadcrumbs can be generated in a more
     Hakyll-idiomatic way, ultimately allowing the tree to be factored out
-
-* Sort menu links by icon metadata
-  * Strictly should be by category, but icon is filling that role as-is
 
 * Full-width category links for menu
 
@@ -52,13 +39,6 @@
   * Can modify the 'master' readout in the header to indicate current mode
     * Or perhaps the 'NORMAL' tag - just something to make it obvious
   * Allow specifying predicates (i.e. via tags) to filter pages out of release mode
-
-* File type metadata
-  * Should provide the means to look up a name and glyph
-    for purposes of sidebar menu and header readout
-    * Filetype should provide a default glyph that can be overridden
-      via a separate 'glyph' metadata field
-  * File type readout (i.e. icon and type name) should be a version, akin to slug
 
 * Support for regular tags
   * Apply recursive categories as regular category tags

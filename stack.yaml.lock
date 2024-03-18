@@ -25,6 +25,13 @@ packages:
       size: 1189
   original:
     hackage: hakyll-images-1.2.1
+- completed:
+    hackage: tagsoup-0.14.8@sha256:56b2023d2e9fdbff093719ce9af5285d2436b234c6c684d6a69f14595a8348ae,2117
+    pantry-tree:
+      sha256: 3d6e8bf0fa4d7a4e9a9040631692e421b7834d68aee1d91d90b2cc49660aeffa
+      size: 1429
+  original:
+    hackage: tagsoup-0.14.8
 snapshots:
 - completed:
     sha256: a81fb3877c4f9031e1325eb3935122e608d80715dc16b586eb11ddbff8671ecd

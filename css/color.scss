@@ -152,3 +152,8 @@ nav details a:active {
     background-color: var(--color-fg);
     color: var(--color-bg);
 }
+
+/* active breadcrumb chain */
+nav details #active {
+    background-color: var(--color-line);
+}

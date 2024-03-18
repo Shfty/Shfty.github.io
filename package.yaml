@@ -34,3 +34,4 @@ dependencies:
   - wai-app-static
   - mime-types
   - directory
+  - tagsoup

@@ -19,14 +19,10 @@
                 <a href="$url$">
                     $partial("templates/slug.html")$
                 </a>
-            $sep$
                 <pre> </pre>
                 <x-glyph type="left-soft-divider"></x-glyph>
                 <pre> </pre>
             $endfor$
-            <pre> </pre>
-            <x-glyph type="left-soft-divider"></x-glyph>
-            <pre> </pre>
             <div>
                 $partial("templates/slug.html")$
             </div>
@@ -42,8 +38,8 @@
             <x-glyph type="right-soft-divider"></x-glyph>
             <pre> </pre>
             <div>
-                <x-glyph type="language-markdown"></x-glyph>
-                <span>markdown</span>
+                <x-glyph type="$filetype$"></x-glyph>
+                <span>$filetype$</span>
             </div>
             <pre>  </pre>
             <span data-fg="purple">Top</span>

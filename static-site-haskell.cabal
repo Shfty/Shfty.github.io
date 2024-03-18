@@ -37,6 +37,7 @@ executable site
     , monad-loops
     , mtl
     , pandoc
+    , tagsoup
     , text
     , text-conversions
     , transformers

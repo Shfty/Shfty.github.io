@@ -7,3 +7,4 @@ extra-deps:
   - hakyll-4.16.2.0
   - hakyll-sass-0.2.4
   - hakyll-images-1.2.1
+  - tagsoup-0.14.8
