@@ -6,7 +6,6 @@ executables:
     source-dirs:
       - src
     other-modules:
-      - Data.FileTree
       - Hakyll.Compiler.Overridable
       - Hakyll.Glyphs
       - Hakyll.Layout

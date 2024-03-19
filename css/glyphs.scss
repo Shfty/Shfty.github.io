@@ -82,6 +82,7 @@ x-glyph[type="markdown"]::before {
 
 x-glyph[type="html"]::before {
     content: var(--glyph-html);
+    color: #E34C26;
 }
 
 x-glyph[type="branch"]::before {

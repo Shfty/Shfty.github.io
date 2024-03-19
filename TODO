@@ -1,3 +1,6 @@
+* Derive default page icon from filetype
+  * Can test with raw_index.html
+
 * Styling for image / video viewers
   * Should be able to use CSS contain / cover
   * Would also be nice to provide CSS click-to-zoom for high-res images
@@ -6,8 +9,11 @@
   * Can use metadata to separate image viewer content (subtitle, etc)
     from main page content, inline automatically
 
-* Sort menu links by icon metadata
-  * Strictly should be by category, but icon is filling that role as-is
+* Polish sorting algorithm
+  * Should be split between categories / pages
+    * Then split by icon
+      * Then sorted alphabetically
+  * Need to separate 'category pages' from categories
 
 * Formalize Categories / Pages model
   * Currently causing ex. 'Game Jam / Synth Rider' to display the wrong icon
@@ -17,12 +23,6 @@
   * Categories (index.html with sibling .html files)
   * Branch Pages (index.html with no sibling .html files)
   * Leaf Pages (non- index.html)
-
-* Look into refactoring breadcrumb generation 
-  * Now the menu is being generated via dependency tree,
-    the file tree / ident tree structure is less useful
-  * Need to see if breadcrumbs can be generated in a more
-    Hakyll-idiomatic way, ultimately allowing the tree to be factored out
 
 * Full-width category links for menu
 

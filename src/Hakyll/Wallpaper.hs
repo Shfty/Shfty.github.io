@@ -35,7 +35,7 @@ makeWallpaper pat (width, height) = do
                     a
                 )
         compile $
-            loadImage
+            cached size $ loadImage
                 >>= ensureFitCompiler width height
 
 wallpapers landscape portrait = do
