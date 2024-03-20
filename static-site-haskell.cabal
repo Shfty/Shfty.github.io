@@ -5,17 +5,40 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           static-site-haskell
-version:        0.1
+version:        0.3
 build-type:     Simple
 
 executable site
   main-is: Main.hs
   other-modules:
-      Hakyll.Compiler.Overridable
-      Hakyll.Glyphs
-      Hakyll.Layout
-      Hakyll.Sass
-      Hakyll.Wallpaper
+      Site.Context
+      Site.Identifier
+      Site.Layout
+      Site.Pattern
+      Site.Routes
+      Site.Template
+      Data.Map.Set
+      Hakyll.Core
+      Hakyll.Core.Compiler.Overridable
+      Hakyll.Core.Item.Empty
+      Hakyll.Core.Item.Sort
+      Hakyll.Core.Metadata.Maybe
+      Hakyll.Core.Routes.Parent
+      Hakyll.Core.Config
+      Hakyll.Web
+      Hakyll.Web.Breadcrumb
+      Hakyll.Web.Extensionless
+      Hakyll.Web.FileType
+      Hakyll.Web.Glyphs
+      Hakyll.Web.Header
+      Hakyll.Web.Icon
+      Hakyll.Web.Layout
+      Hakyll.Web.Menu
+      Hakyll.Web.Pandoc.Style
+      Hakyll.Web.Sass.HotReload
+      Hakyll.Web.Slug
+      Hakyll.Web.Viewer
+      Hakyll.Web.Wallpaper
   hs-source-dirs:
       src
   ghc-options: -threaded -with-rtsopts=-N
@@ -23,6 +46,7 @@ executable site
       MissingH
     , aeson
     , base
+    , binary
     , blaze-html
     , blaze-markup
     , bytestring

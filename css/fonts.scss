@@ -15,6 +15,11 @@ main-content {
     font-family: var(--text-font);
 }
 
+main-content > h1 > x-glyph {
+    font-size: 2.5rem;
+    vertical-align: middle;
+}
+
 x-glyph {
     font-family: var(--code-font)
 }

@@ -1,9 +1,16 @@
-module Hakyll.Layout where
+module Hakyll.Web.Layout where
 
-import Data.Maybe
+import Data.Maybe (catMaybes)
+import Hakyll (
+    Compiler,
+    Context,
+    Identifier,
+    Item,
+    constField,
+    loadAndApplyTemplate,
+ )
 
-import Hakyll
-
+applyTernaryTemplate :: Identifier -> Maybe String -> Maybe String -> Context a -> Item a -> Compiler (Item String)
 applyTernaryTemplate template before after ctx = do
     let ctx' =
             mconcat $
@@ -14,4 +21,3 @@ applyTernaryTemplate template before after ctx = do
     let ctx'' = ctx' <> ctx
 
     loadAndApplyTemplate template ctx''
-

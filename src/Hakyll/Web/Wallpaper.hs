@@ -1,9 +1,25 @@
-module Hakyll.Wallpaper where
+module Hakyll.Web.Wallpaper where
 
-import Data.Foldable
-
-import Hakyll
-import Hakyll.Images
+import Data.Foldable (traverse_)
+import Hakyll (
+    Pattern,
+    Rules,
+    cached,
+    compile,
+    copyFileCompiler,
+    customRoute,
+    idRoute,
+    match,
+    route,
+    toFilePath,
+    version,
+ )
+import Hakyll.Images (
+    Height,
+    Width,
+    ensureFitCompiler,
+    loadImage,
+ )
 
 import System.FilePath
 
@@ -17,10 +33,12 @@ wallpaperSizes fac range w h =
         ]
     ]
 
+wallpaperSizes2 :: [Int] -> Width -> Height -> [(Width, Height)]
 wallpaperSizes2 = wallpaperSizes 2
 
 -----------------------------------------------------------------------------------------
 
+makeWallpaper :: Pattern -> (Width, Height) -> Rules ()
 makeWallpaper pat (width, height) = do
     let size = show width ++ "-" ++ show height
     match pat $ version size $ do
@@ -35,9 +53,11 @@ makeWallpaper pat (width, height) = do
                     a
                 )
         compile $
-            cached size $ loadImage
-                >>= ensureFitCompiler width height
+            cached size $
+                loadImage
+                    >>= ensureFitCompiler width height
 
+wallpapers :: Pattern -> Pattern -> Rules ()
 wallpapers landscape portrait = do
     -- Full-size wallpapers
     match landscape $ do
@@ -56,4 +76,3 @@ wallpapers landscape portrait = do
 
     traverse_ makeLandscape landscapeSizes
     traverse_ makePortrait portraitSizes
-

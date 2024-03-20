@@ -2,4 +2,5 @@
 title: Site Config
 information: Secret YAML metadata
 highlightStyle: dracula.theme
+compileWallpapers: False
 ---

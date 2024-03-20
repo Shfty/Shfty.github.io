@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Hakyll.Compiler.Overridable where
+module Hakyll.Core.Compiler.Overridable where
 
 import Control.Monad.Loops
 import Data.List

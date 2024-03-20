@@ -1,3 +1,9 @@
+* Finalize code structure pass
+  * Still a few elements in main that should be factored into modules
+
+* Consolidate site content (css, fonts, images, pages, etc) into a 'site' directory
+  * Should be able to move files, then tweak paths in Site.Pattern, Site.Template, etc
+
 * Derive default page icon from filetype
   * Can test with raw_index.html
 

@@ -1,4 +1,4 @@
-version: 0.1
+version: 0.3
 executables:
   site:
     main: Main.hs
@@ -6,14 +6,38 @@ executables:
     source-dirs:
       - src
     other-modules:
-      - Hakyll.Compiler.Overridable
-      - Hakyll.Glyphs
-      - Hakyll.Layout
-      - Hakyll.Sass
-      - Hakyll.Wallpaper
+      - Site.Context
+      - Site.Identifier
+      - Site.Layout
+      - Site.Pattern
+      - Site.Routes
+      - Site.Template
+      - Data.Map.Set
+      - Hakyll.Core
+      - Hakyll.Core.Compiler.Overridable
+      - Hakyll.Core.Item.Empty
+      - Hakyll.Core.Item.Sort
+      - Hakyll.Core.Metadata.Maybe
+      - Hakyll.Core.Routes.Parent
+      - Hakyll.Core.Config
+      - Hakyll.Web
+      - Hakyll.Web.Breadcrumb
+      - Hakyll.Web.Extensionless
+      - Hakyll.Web.FileType
+      - Hakyll.Web.Glyphs
+      - Hakyll.Web.Header
+      - Hakyll.Web.Icon
+      - Hakyll.Web.Layout
+      - Hakyll.Web.Menu
+      - Hakyll.Web.Pandoc.Style
+      - Hakyll.Web.Sass.HotReload
+      - Hakyll.Web.Slug
+      - Hakyll.Web.Viewer
+      - Hakyll.Web.Wallpaper
 
 dependencies:
   - base
+  - binary
   - containers
   - hakyll
   - hakyll-sass
