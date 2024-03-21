@@ -2,28 +2,46 @@
 
 import Control.Monad
 import Data.Function
-import Data.Functor
-import Data.List
-import Data.Maybe
 import Hakyll
 import Hakyll.Core
 import Hakyll.Web
+import qualified Site.Config as Config
+import qualified Site.Context as Context
 import qualified Site.Identifier as Identifier
 import Site.Layout
-import qualified Site.Context as Context
 import qualified Site.Pattern as Pattern
+import qualified Site.Pattern.Directory as Directory
+import qualified Site.Pattern.Extension as Extension
 import qualified Site.Routes as Routes
 import qualified Site.Template as Template
-import System.FilePath
+import System.Process (readProcess)
+
+makeSlug' = makeSlug Template.slug
+makeHeader' = makeHeader Template.header
+
+-- Given final page content, lift it into the main layout, and relativize its URLs
+mainCompiler ctx =
+    applyLayoutTemplate ctx
+        >=> relativizeUrls
+
+providerDir dir config =
+    config
+        { providerDirectory = dir
+        }
+
+config = providerDir "./site" $ extensionlessUrls defaultConfiguration
 
 main :: IO ()
-main = hakyllWith (extensionlessUrls defaultConfiguration) $ do
+main = hakyllWith config $ do
+    gitBranch <- preprocess $ readProcess "git" ["branch", "--show-current"] ""
+    let siteCtx = constField "branch" gitBranch <> Context.site
+
     -- Load site config
     config <- loadConfig $ fromFilePath "config"
 
     -- Load code highlighting style
-    let highlightPath = configMaybe "breezeDark" "highlightStyle" config
-    pandocStyle <- loadPandocStyle highlightPath
+    let highlightStyle = Config.highlightStyle config
+    pandocStyle <- loadPandocStyle highlightStyle
 
     -- Create custom pandoc compiler and accompanying CSS styles
     let pandocCompiler' = pandocCompilerWithStyle pandocStyle
@@ -41,12 +59,12 @@ main = hakyllWith (extensionlessUrls defaultConfiguration) $ do
         compile copyFileCompiler
 
     -- Compile wallpapers
-    if configMaybe False "compileWallpapers" config
-        then wallpapers Pattern.wallpaperLandscape Pattern.wallpaperPortrait
-        else return ()
+    when (Config.compileWallpapers config) $
+        wallpapers Pattern.wallpaperLandscape Pattern.wallpaperPortrait
 
     -- Compile footer
-    match (fromList [Identifier.footer]) $ compile getResourceBody
+    match (fromList [Identifier.footer]) $
+        compile getResourceBody
 
     --- Baseline compilation
     let providers =
@@ -54,86 +72,73 @@ main = hakyllWith (extensionlessUrls defaultConfiguration) $ do
                 & withCompiler "None" getResourceBody
                 & withCompiler "Default" pandocCompiler'
                 & withCompiler "pandoc" pandocCompiler'
-                & withContext "None" Context.site
+                & withContext "None" siteCtx
 
     let spec a b c = CompilerSpec providers $ CompilerDefaults a b c
 
-    let breadcrumbCtx' = breadcrumbCtx versionSlug
-
-    let makeSlug' = makeSlug Template.slug
-    let makeHeader' = makeHeader Template.header
-
     -- Compile images
-    match (Pattern.base .&&. Pattern.imageAsset .&&. hasNoVersion) $ do
-        let imageCtx = iconCtx "image" "white" <> Context.site
+    match (Directory.pages .&&. Extension.image .&&. hasNoVersion) $ do
+        let imageCtx = iconCtx "image" "white" <> siteCtx
         makeSlug' imageCtx
-        makeMenuSection Context.site
-        makeHeader' (breadcrumbCtx' imageCtx <> imageCtx)
+        makeMenuSection siteCtx
+        makeHeader' (breadcrumbCtx imageCtx <> imageCtx)
 
         makeViewerWith parentRoute Routes.base $
-            compileViewer Template.image Context.site
-                >>= applyLayoutTemplate Context.site
-                >>= relativizeUrls
+            compileViewer Template.image siteCtx
+                >>= mainCompiler siteCtx
 
     -- Compile videos
-    match (Pattern.base .&&. Pattern.videoAsset .&&. hasNoVersion) $ do
-        let videoCtx = iconCtx "video" "white" <> Context.site
+    match (Directory.pages .&&. Extension.video .&&. hasNoVersion) $ do
+        let videoCtx = iconCtx "video" "white" <> siteCtx
         makeSlug' videoCtx
-        makeMenuSection Context.site
-        makeHeader' (breadcrumbCtx' videoCtx <> videoCtx)
+        makeMenuSection siteCtx
+        makeHeader' (breadcrumbCtx videoCtx <> videoCtx)
 
         makeViewerWith parentRoute Routes.base $
-            compileViewer Template.video Context.site
-                >>= applyLayoutTemplate Context.site
-                >>= relativizeUrls
+            compileViewer Template.video siteCtx
+                >>= mainCompiler siteCtx
+
+    let makeSpec = spec pandocCompiler'
 
     -- Compile pages
-    let pageSpec = spec pandocCompiler' Context.site Template.page
+    let pageSpec = makeSpec siteCtx Template.page
 
     match Pattern.pages $ do
-        let pageCtx = iconCtx "file" "white" <> Context.site
+        let pageCtx = iconCtx "file" "white" <> siteCtx
         makeSlug' pageCtx
-        makeMenuSection Context.site
-        makeHeader' (breadcrumbCtx' pageCtx <> pageCtx)
+        makeMenuSection siteCtx
+        makeHeader' (breadcrumbCtx pageCtx <> pageCtx)
 
         route Routes.base
         compile $
             overridableCompiler pageSpec
-                >>= applyLayoutTemplate Context.site
-                >>= relativizeUrls
+                >>= mainCompiler siteCtx
 
     -- Compile categories
-    let children ident = do
-            let path = toFilePath ident
-            let childPages = fromGlob (replaceFileName path "*.*") .&&. Pattern.notIndex
-            let childCats = fromGlob $ replaceFileName path "*/index.*"
-            let pat = (childPages .||. childCats) .&&. hasVersion versionMenuSection
-            ids <- getMatches pat :: Compiler [Identifier]
-            this <- loadSlug ident :: Compiler String
-            loadAll (fromList ids) >>= sortPosts :: Compiler [Item String]
+    let loadChildren ident = loadAll $ Pattern.children ident
+
+    let children ident = loadChildren ident >>= sortPosts :: Compiler [Item String]
+
+    let childrenCtx ident = listField "children" Context.post (children ident) <> siteCtx
 
     let categoryMenuSection item = do
             ident <- getUnderlying
-            let ctx = listField "children" Context.post (children ident) <> Context.site
-            loadAndApplyTemplate "templates/menu-section.html" ctx item
+            let ctx = childrenCtx ident <> siteCtx
+            loadAndApplyTemplate Template.menuSection ctx item
 
     let catSpec ident =
-            spec
-                pandocCompiler'
-                ( listField "posts" Context.post (children ident)
-                    <> Context.site
-                )
+            makeSpec
+                (childrenCtx ident)
                 Template.category
 
     match Pattern.categories $ do
-        let categoryCtx = iconCtx "custom-folder" "purple" <> Context.site
+        let categoryCtx = iconCtx "custom-folder" "purple" <> siteCtx
         makeSlug' categoryCtx
-        makeMenuSectionWith $ menuSection Context.site >>= categoryMenuSection
-        makeHeader' (breadcrumbCtx' categoryCtx <> categoryCtx)
+        makeMenuSectionWith $ compileMenuSection siteCtx >>= categoryMenuSection
+        makeHeader' (breadcrumbCtx categoryCtx <> categoryCtx)
 
         route Routes.base
         compile $ do
             ident <- getUnderlying
             overridableCompiler (catSpec ident)
-                >>= applyLayoutTemplate Context.site
-                >>= relativizeUrls
+                >>= mainCompiler siteCtx

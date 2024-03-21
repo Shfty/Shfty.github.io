@@ -1,11 +1,15 @@
 module Site.Routes where
 
 import Data.List (tail)
-import Hakyll (composeRoutes, mapContextBy, setExtension)
+import Hakyll (Context, Routes, composeRoutes, mapContextBy, setExtension)
 import Hakyll.Core.Routes.Parent
 import System.FilePath (joinPath, splitDirectories)
 
+base :: Routes
 base = setExtension "html" `composeRoutes` parentRoute
 
+liftPath :: Context a -> Context a
 liftPath =
-    mapContextBy (== "path") (\a -> "/" ++ joinPath (tail $ splitDirectories a))
+    mapContextBy
+        (== "path")
+        (("/" ++) . joinPath . (\(a : as) -> as) . splitDirectories)

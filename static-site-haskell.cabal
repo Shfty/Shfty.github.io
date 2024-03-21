@@ -11,10 +11,13 @@ build-type:     Simple
 executable site
   main-is: Main.hs
   other-modules:
+      Site.Config
       Site.Context
       Site.Identifier
       Site.Layout
       Site.Pattern
+      Site.Pattern.Directory
+      Site.Pattern.Extension
       Site.Routes
       Site.Template
       Data.Map.Set
@@ -60,6 +63,7 @@ executable site
     , monad-loops
     , mtl
     , pandoc
+    , process
     , tagsoup
     , text
     , text-conversions

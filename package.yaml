@@ -6,10 +6,13 @@ executables:
     source-dirs:
       - src
     other-modules:
+      - Site.Config
       - Site.Context
       - Site.Identifier
       - Site.Layout
       - Site.Pattern
+      - Site.Pattern.Directory
+      - Site.Pattern.Extension
       - Site.Routes
       - Site.Template
       - Data.Map.Set
@@ -58,3 +61,4 @@ dependencies:
   - mime-types
   - directory
   - tagsoup
+  - process

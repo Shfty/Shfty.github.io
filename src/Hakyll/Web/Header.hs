@@ -5,13 +5,13 @@ import Data.Data (Typeable)
 import Hakyll (Compiler, Context, Identifier, Rules, compile, loadAndApplyTemplate, loadBody, setVersion, version)
 import Hakyll.Core.Item.Empty (makeEmptyItem)
 
-versionHeader :: String
-versionHeader = "header"
+header :: String
+header = "header"
 
 makeHeader :: Identifier -> Context String -> Rules ()
-makeHeader headerTemplate ctx = version versionHeader $ compile $ do
+makeHeader headerTemplate ctx = version header $ compile $ do
     makeEmptyItem
         >>= loadAndApplyTemplate headerTemplate ctx
 
 loadHeader :: (Binary a, Typeable a) => Identifier -> Compiler a
-loadHeader ident = loadBody $ setVersion (Just versionHeader) ident
+loadHeader ident = loadBody $ setVersion (Just header) ident

@@ -6,10 +6,10 @@ module Hakyll.Web.Extensionless where
 import Data.List (isInfixOf, isPrefixOf)
 import Data.Text (unpack)
 import Data.Text.Conversions (fromText)
-import Hakyll (Configuration, Context, field, getRoute, previewSettings, setVersion, toUrl, itemIdentifier)
+import Hakyll (Configuration, Context, field, getRoute, itemIdentifier, previewSettings, setVersion, toUrl)
 import System.Directory (doesFileExist)
 import System.FilePath (dropExtension, dropFileName, takeExtension, takeFileName, (<.>), (</>))
-import WaiAppStatic.Types (fromPiece, ssGetMimeType, ssLookupFile, unsafeToPiece, fileName)
+import WaiAppStatic.Types (fileName, fromPiece, ssGetMimeType, ssLookupFile, unsafeToPiece)
 
 -- Custom Hakyll configuration
 -- Emulates the server config of GitHub Pages

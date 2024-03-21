@@ -4,32 +4,33 @@ module Hakyll.Web.Menu where
 
 import Prelude hiding (lookup)
 
+import Control.Monad (liftM)
 import Data.Binary (Binary)
 import Data.Data (Typeable)
 import Data.List (isPrefixOf)
 import Data.Map (delete, fromList, insert, lookup, toList)
-import Hakyll (Compiler, Context, Identifier, Item, Rules, compile, getUnderlying, loadAndApplyTemplate, loadBody, makeItem, setVersion, version)
+import Hakyll (Compiler, Context, Identifier, Item, Rules, compile, getUnderlying, itemBody, loadAndApplyTemplate, loadBody, makeItem, setVersion, version)
 import Hakyll.Web.Slug (loadSlug)
 import Text.HTML.TagSoup (Tag (TagOpen))
 
-versionMenuSection :: String
-versionMenuSection = "menuSection"
+menuSection :: String
+menuSection = "menuSection"
 
-menuSection :: (Typeable a, Binary a) => Context a -> Compiler (Item String)
-menuSection ctx = do
-    ident <- getUnderlying
-    item <- loadSlug ident
-    makeItem item
+compileMenuSection :: Context String -> Compiler (Item String)
+compileMenuSection ctx = do
+    getUnderlying
+        >>= loadSlug
+        >>= (makeItem . itemBody)
         >>= loadAndApplyTemplate "templates/link.html" ctx
 
 makeMenuSectionWith :: Compiler (Item String) -> Rules ()
-makeMenuSectionWith = version versionMenuSection . compile
+makeMenuSectionWith = version menuSection . compile
 
-makeMenuSection :: (Typeable a, Binary a) => Context a -> Rules ()
-makeMenuSection = makeMenuSectionWith . menuSection
+makeMenuSection :: Context String -> Rules ()
+makeMenuSection = makeMenuSectionWith . compileMenuSection
 
 loadMenuSection :: (Binary a, Typeable a) => Identifier -> Compiler a
-loadMenuSection = loadBody . setVersion (Just versionMenuSection)
+loadMenuSection = loadBody . setVersion (Just menuSection)
 
 collapseMenu :: String -> Tag String -> Tag String
 collapseMenu url a = case a of

@@ -5,6 +5,8 @@ import Data.Data (Typeable)
 import Hakyll (Compiler, Context, Identifier, Item, Routes, Rules, Writable, compile, copyFileCompiler, loadAndApplyTemplate, relativizeUrls, route, version)
 import Hakyll.Core.Item.Empty (makeEmptyItem)
 
+viewerContent = "viewerContent"
+
 compileViewer :: Identifier -> Context String -> Compiler (Item String)
 compileViewer template ctx = do
     makeEmptyItem
@@ -12,7 +14,7 @@ compileViewer template ctx = do
 
 makeViewerWith :: (Typeable a, Binary a, Writable a) => Routes -> Routes -> Compiler (Item a) -> Rules ()
 makeViewerWith contentRoute viewerRoute compiler = do
-    version "viewerContent" $ do
+    version viewerContent $ do
         route contentRoute
         compile copyFileCompiler
 

@@ -18,9 +18,11 @@ sidebarHeader = "templates/sidebar/header.html" :: Identifier
 image = "templates/image.html" :: Identifier
 video = "templates/video.html" :: Identifier
 
+-- Slug and menu
 slug = "templates/slug.html" :: Identifier
+menuSection = "templates/menu-section.html" :: Identifier
 
--- Page and category
+-- Pages, categories
 page = "templates/post.html" :: Identifier
 category = "templates/category.html" :: Identifier
 

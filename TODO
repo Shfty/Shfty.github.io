@@ -1,11 +1,11 @@
 * Finalize code structure pass
   * Still a few elements in main that should be factored into modules
 
-* Consolidate site content (css, fonts, images, pages, etc) into a 'site' directory
-  * Should be able to move files, then tweak paths in Site.Pattern, Site.Template, etc
-
 * Derive default page icon from filetype
   * Can test with raw_index.html
+
+* Derive 'master' header readout from actual git branch
+  * Makes it obvious if the site is running in production mode or not
 
 * Styling for image / video viewers
   * Should be able to use CSS contain / cover

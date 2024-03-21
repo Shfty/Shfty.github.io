@@ -1,6 +1,6 @@
 ---
 title: Site Config
 information: Secret YAML metadata
-highlightStyle: dracula.theme
+highlightStyle: site/dracula.theme
 compileWallpapers: False
 ---

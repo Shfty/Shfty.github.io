@@ -3,7 +3,7 @@ module Site.Layout where
 import Control.Monad ((>=>))
 import Data.Functor ((<&>))
 import Data.Maybe (fromMaybe)
-import Hakyll (Compiler, Context, Item, getRoute, itemBody, itemIdentifier, loadAndApplyTemplate, loadBody, makeItem, constField)
+import Hakyll (Compiler, Context, Item, constField, getRoute, itemBody, itemIdentifier, loadAndApplyTemplate, loadBody, makeItem)
 import Hakyll.Core
 import Hakyll.Web
 import Site.Identifier as Identifier (footer)
@@ -16,12 +16,11 @@ applyLayoutTemplate :: Context String -> Item String -> Compiler (Item String)
 applyLayoutTemplate ctx item = do
     let ident = itemIdentifier item
 
-    bodyHeader <- loadHeader ident
     menuBody <- loadMenuSection $ fromFilePath "pages/index.md"
 
-    route <- getRoute $ setVersion Nothing ident
-    let route' = fromMaybe (fail ("No route for " ++ show ident)) route
-    let menuBody' = withTags (collapseMenu route') menuBody
+    route' <-
+        getRoute (setVersion Nothing ident) <&> collapseMenu . fromMaybe (fail $ "No route for " ++ show ident)
+    let menuBody' = withTags route' menuBody
 
     menu <- makeItem ("<nav>" ++ menuBody' ++ "</nav>")
 
@@ -36,6 +35,7 @@ applyLayoutTemplate ctx item = do
             loadAndApplyTemplate Template.flexScroll scrollCtx
                 >=> applyFlexColumn header footer columnCtx
 
+    bodyHeader <- loadHeader ident
     body' <- panel (Just bodyHeader) Nothing ctx (constField "class" "body" <> ctx) item
     menu' <- panel (Just menuHeader) Nothing ctx (constField "class" "menu divider-right" <> ctx) menu
 

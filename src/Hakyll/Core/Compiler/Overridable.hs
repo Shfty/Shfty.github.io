@@ -87,7 +87,7 @@ overridableCompiler spec = do
 
                             case ty of
                                 "glob" -> do
-                                    let pat = fromGlob $ fromText b
+                                    let pat = fromGlob (fromText b) .&&. hasNoVersion
 
                                     listFieldWith
                                         (Data.Aeson.Key.toString k)

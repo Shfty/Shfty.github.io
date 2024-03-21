@@ -1,8 +1,9 @@
 module Hakyll.Web.Breadcrumb where
 
 import Data.List (isInfixOf)
-import Hakyll (Compiler, Item, itemIdentifier, listFieldWith, load, setVersion, toFilePath)
+import Hakyll (Compiler, Context, Item, itemIdentifier, listFieldWith, load, makeItem, setVersion, toFilePath)
 import Hakyll.Core.Identifier (fromFilePath)
+import Hakyll.Web.Slug (loadSlug)
 import System.FilePath (
     splitDirectories,
     takeDirectory,
@@ -10,7 +11,8 @@ import System.FilePath (
     (</>),
  )
 
-breadcrumbCtx versionSlug ctx =
+breadcrumbCtx :: Context String -> Context String
+breadcrumbCtx ctx =
     listFieldWith
         "breadcrumb"
         ctx
@@ -29,9 +31,8 @@ breadcrumbCtx versionSlug ctx =
                     let (path, breadcrumb) = foldr (\a (path, acc) -> (a, acc <> [last acc </> a])) (path, [""]) $ reverse dirs
                     let breadcrumb' =
                             tail
-                                ( (setVersion (Just versionSlug) . fromFilePath)
-                                    . (</> "index" <.> "md")
+                                ( fromFilePath . (</> "index" <.> "md")
                                     <$> breadcrumb
                                 )
-                    mapM load breadcrumb' :: Compiler [Item String]
+                    mapM loadSlug breadcrumb'
         )
