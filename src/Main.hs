@@ -2,6 +2,7 @@
 
 import Control.Monad
 import Data.Function
+import Data.Functor
 import Hakyll
 import Hakyll.Core
 import Hakyll.Web
@@ -29,15 +30,21 @@ providerDir dir config =
         { providerDirectory = dir
         }
 
-config = providerDir "./site" $ extensionlessUrls defaultConfiguration
+hakyllConfig = providerDir "./site" $ extensionlessUrls defaultConfiguration
 
 main :: IO ()
-main = hakyllWith config $ do
-    gitBranch <- preprocess $ readProcess "git" ["branch", "--show-current"] ""
-    let siteCtx = constField "branch" gitBranch <> Context.site
+main = hakyllWith hakyllConfig $ do
+    -- Load git branch into a context
+    branchCtx' <- Context.branchField "branch"
 
     -- Load site config
     config <- loadConfig $ fromFilePath "config"
+
+    -- Get debug mode flag
+    let debugModeCtx = boolField "debugMode" (const $ Config.debugMode config)
+
+    -- Assemble global site context
+    let siteCtx = branchCtx' <> debugModeCtx <> Context.site
 
     -- Load code highlighting style
     let highlightStyle = Config.highlightStyle config

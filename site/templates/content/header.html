@@ -1,11 +1,35 @@
 <header>
     <flex-row style="justify-content: space-between">
         <flex-row style="justify-content: flex-start; flex: none;">
-            <span data-bg="purple" data-fg="bg" style="padding-left: 1rch">
-                <b>NORMAL</b>
+            <span data-bg="
+                $-if(debugMode)-$
+                    red
+                $-else-$
+                    purple
+                $-endif-$
+            " data-fg="bg" style="padding-left: 1rch">
+                <b>
+                    $-if(debugMode)-$
+                        DEBUG
+                    $-else-$
+                        NORMAL
+                    $-endif-$
+                </b>
             </span>
-            <pre data-bg="purple"> </pre>
-            <x-glyph type="left-hard-divider" data-fg="purple"></x-glyph>
+            <pre data-bg="
+                $-if(debugMode)-$
+                    red
+                $-else-$
+                    purple
+                $-endif-$
+            "> </pre>
+            <x-glyph type="left-hard-divider" data-fg="
+                $-if(debugMode)-$
+                    red
+                $-else-$
+                    purple
+                $-endif-$
+            "></x-glyph>
             <pre> </pre>
         </flex-row>
         <flex-row style="justify-content: flex-start; overflow: scroll;">

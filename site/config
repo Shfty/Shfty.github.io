@@ -3,4 +3,5 @@ title: Site Config
 information: Secret YAML metadata
 highlightStyle: site/dracula.theme
 compileWallpapers: False
+debugMode: True
 ---

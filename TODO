@@ -4,8 +4,10 @@
 * Derive default page icon from filetype
   * Can test with raw_index.html
 
-* Derive 'master' header readout from actual git branch
-  * Makes it obvious if the site is running in production mode or not
+* Style git branch based on whether it is 'master' or not
+  * master should receive the standard purple style
+  * Anything else should be shown in red
+  * May be achievable in pure CSS
 
 * Styling for image / video viewers
   * Should be able to use CSS contain / cover
