@@ -2,12 +2,20 @@
 
 module Site.Config where
 
-import Hakyll.Core.Config (configMaybe)
 import Data.Aeson (Key, Object)
+import Data.Aeson.Types (FromJSON, Key, Object, parseMaybe, (.:))
+import Data.Maybe (fromMaybe)
+import Hakyll (Identifier, Metadata, Rules, getMetadata)
 
 highlightStyle' = "highlightStyle" :: Key
 compileWallpapers' = "compileWallpapers" :: Key
 debugMode' = "debugMode" :: Key
+
+load :: Identifier -> Rules Metadata
+load = getMetadata
+
+configMaybe :: (FromJSON a) => a -> Key -> Object -> a
+configMaybe d key val = fromMaybe d $ parseMaybe (.: key) val
 
 highlightStyle :: Object -> String
 highlightStyle = configMaybe "breezeDark" highlightStyle'

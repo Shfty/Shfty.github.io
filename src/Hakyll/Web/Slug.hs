@@ -12,8 +12,8 @@ slugCompiler :: Identifier -> Context String -> Compiler (Item String)
 slugCompiler slugTemplate ctx =
     makeEmptyItem >>= loadAndApplyTemplate slugTemplate ctx
 
-makeSlug :: Identifier -> Context String -> Rules ()
-makeSlug slugTemplate = version slug . compile . slugCompiler slugTemplate
+rulesSlug :: Identifier -> Context String -> Rules ()
+rulesSlug slugTemplate = version slug . compile . slugCompiler slugTemplate
 
 loadSlug :: Identifier -> Compiler (Item String)
 loadSlug = load . setVersion (Just slug)

@@ -1,9 +1,10 @@
 module Site.Context where
 
 import Data.Functor ((<&>))
-import Hakyll (Context, Rules, constField, dateField, defaultContext, preprocess)
+import Hakyll (Context, Rules, constField, dateField, defaultContext, listField, preprocess)
 import Hakyll.Core
 import Hakyll.Web
+import Site.Compiler as Compiler
 import Site.Routes (liftPath)
 import System.Process (readProcess)
 
@@ -17,3 +18,6 @@ post = dateField "date" "%B %e, %Y" `mappend` site
 branchField :: String -> Rules (Context a)
 branchField f = do
     preprocess (readProcess "git" [f, "--show-current"] "" <&> constField f)
+
+children :: Context a
+children = listField "children" post Compiler.loadAndSortChildren

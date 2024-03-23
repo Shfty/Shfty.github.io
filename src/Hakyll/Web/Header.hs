@@ -8,8 +8,8 @@ import Hakyll.Core.Item.Empty (makeEmptyItem)
 header :: String
 header = "header"
 
-makeHeader :: Identifier -> Context String -> Rules ()
-makeHeader headerTemplate ctx = version header $ compile $ do
+rulesHeader :: Identifier -> Context String -> Rules ()
+rulesHeader headerTemplate ctx = version header $ compile $ do
     makeEmptyItem
         >>= loadAndApplyTemplate headerTemplate ctx
 

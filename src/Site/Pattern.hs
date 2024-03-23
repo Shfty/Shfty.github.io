@@ -2,7 +2,10 @@
 
 module Site.Pattern where
 
-import Hakyll (Pattern, complement, fromGlob, hasNoVersion, hasVersion, toFilePath, (.&&.), (.||.))
+import Data.Binary (Binary)
+import Data.Data (Typeable)
+import Data.Functor ((<&>))
+import Hakyll (Compiler, Identifier, Item, Pattern, complement, fromGlob, getUnderlying, hasNoVersion, hasVersion, loadAll, toFilePath, (.&&.), (.||.))
 import Hakyll.Web.Menu (menuSection)
 import qualified Site.Pattern.Directory as Directory
 import qualified Site.Pattern.Extension as Extension
@@ -12,8 +15,8 @@ filePat file = fromGlob $ "**/" ++ file
 
 config = "config" :: Pattern
 
-wallpaperLandscape = Directory.images .&&. filePat "base.png" :: Pattern
-wallpaperPortrait = Directory.images .&&. filePat "base-vertical.png" :: Pattern
+wallpaperLandscape = Directory.images .&&. filePat "base.png"
+wallpaperPortrait = Directory.images .&&. filePat "base-vertical.png"
 wallpaper = wallpaperLandscape .||. wallpaperPortrait
 notWallpaper = complement wallpaper
 
@@ -44,8 +47,12 @@ scss = Directory.css .&&. Extension.scss
 mainScss = Directory.css .&&. filePat "main.scss"
 
 -- Match all the immediate children of the provided ident
-children ident = do
+childrenOf :: Identifier -> Pattern
+childrenOf ident = do
     let path = toFilePath ident
     let childPages = fromGlob (replaceFileName path "*.*") .&&. notIndex
     let childCats = fromGlob $ replaceFileName path "*/index.*"
-    (childPages .||. childCats) .&&. hasVersion menuSection
+    childPages .||. childCats
+
+children :: Compiler Pattern
+children = getUnderlying <&> childrenOf

@@ -3,17 +3,12 @@ module Hakyll.Web.Viewer where
 import Data.Binary (Binary)
 import Data.Data (Typeable)
 import Hakyll (Compiler, Context, Identifier, Item, Routes, Rules, Writable, compile, copyFileCompiler, loadAndApplyTemplate, relativizeUrls, route, version)
-import Hakyll.Core.Item.Empty (makeEmptyItem)
+import Hakyll.Core (emptyCompiler, makeEmptyItem)
 
 viewerContent = "viewerContent"
 
-compileViewer :: Identifier -> Context String -> Compiler (Item String)
-compileViewer template ctx = do
-    makeEmptyItem
-        >>= loadAndApplyTemplate template ctx
-
-makeViewerWith :: (Typeable a, Binary a, Writable a) => Routes -> Routes -> Compiler (Item a) -> Rules ()
-makeViewerWith contentRoute viewerRoute compiler = do
+rulesViewerWith :: (Typeable a, Binary a, Writable a) => Routes -> Routes -> Compiler (Item a) -> Rules ()
+rulesViewerWith contentRoute viewerRoute compiler = do
     version viewerContent $ do
         route contentRoute
         compile copyFileCompiler
@@ -21,6 +16,6 @@ makeViewerWith contentRoute viewerRoute compiler = do
     route viewerRoute
     compile compiler
 
-makeViewer :: Identifier -> Routes -> Routes -> Context String -> Rules ()
-makeViewer template contentRoute viewerRoute ctx = do
-    makeViewerWith contentRoute viewerRoute $ compileViewer template ctx
+rulesViewer :: Identifier -> Routes -> Routes -> Context String -> Rules ()
+rulesViewer template contentRoute viewerRoute ctx = do
+    rulesViewerWith contentRoute viewerRoute $ emptyCompiler template ctx

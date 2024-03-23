@@ -4,6 +4,7 @@ import Hakyll (Identifier, Rules, compile, create, defaultHakyllReaderOptions, d
 import Hakyll.Core.Compiler (Compiler)
 import Hakyll.Core.Item (Item)
 import Hakyll.Core.Rules (preprocess)
+import Hakyll.Core.Rules.Singleton (createIdent)
 import Text.Pandoc (writerHighlightStyle)
 import Text.Pandoc.Class (runIOorExplode)
 import Text.Pandoc.Highlighting (Style, lookupHighlightingStyle, styleToCss)
@@ -21,7 +22,7 @@ pandocCompilerWithStyle style =
 loadPandocStyle :: String -> Rules Style
 loadPandocStyle = preprocess . runIOorExplode . lookupHighlightingStyle
 
-makeStyleCSS :: Identifier -> Style -> Rules ()
-makeStyleCSS path style = create [path] $ do
+rulesStyleCSS :: Identifier -> Style -> Rules ()
+rulesStyleCSS path style = createIdent path $ do
     route idRoute
     compile $ makeItem $ styleToCss style

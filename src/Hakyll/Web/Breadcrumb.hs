@@ -11,8 +11,8 @@ import System.FilePath (
     (</>),
  )
 
-breadcrumbCtx :: Context String -> Context String
-breadcrumbCtx ctx =
+breadcrumbContext :: Context String -> Context String
+breadcrumbContext ctx =
     listFieldWith
         "breadcrumb"
         ctx

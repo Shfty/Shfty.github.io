@@ -11,6 +11,8 @@ build-type:     Simple
 executable site
   main-is: Main.hs
   other-modules:
+      Site
+      Site.Compiler
       Site.Config
       Site.Context
       Site.Identifier
@@ -19,14 +21,18 @@ executable site
       Site.Pattern.Directory
       Site.Pattern.Extension
       Site.Routes
+      Site.Rules
       Site.Template
       Data.Map.Set
       Hakyll.Core
+      Hakyll.Core.Compiler.Empty
       Hakyll.Core.Compiler.Overridable
+      Hakyll.Core.Identifier.Pattern.Singleton
       Hakyll.Core.Item.Empty
       Hakyll.Core.Item.Sort
       Hakyll.Core.Metadata.Maybe
       Hakyll.Core.Routes.Parent
+      Hakyll.Core.Rules.Singleton
       Hakyll.Core.Config
       Hakyll.Web
       Hakyll.Web.Breadcrumb

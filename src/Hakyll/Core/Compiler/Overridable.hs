@@ -22,6 +22,9 @@ data CompilerDefaults a = CompilerDefaults
     , getTemplate :: !Identifier
     }
 
+defaults :: Compiler (Item a) -> Context a -> Identifier -> CompilerDefaults a
+defaults = CompilerDefaults
+
 mapCompiler f defaults = defaults{getCompiler = f $ getCompiler defaults}
 mapContext f defaults = defaults{getContext = f $ getContext defaults}
 mapTemplate f defaults = defaults{getContext = f $ getTemplate defaults}
@@ -43,6 +46,9 @@ data CompilerSpec a = CompilerSpec
     { getProviders :: !(CompilerProviders a)
     , getDefaults :: !(CompilerDefaults a)
     }
+
+spec :: CompilerProviders a -> CompilerDefaults a -> CompilerSpec a
+spec = CompilerSpec
 
 mapDefaults f spec = spec{getDefaults = f $ getDefaults spec}
 

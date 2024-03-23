@@ -30,6 +30,3 @@ category = "templates/category.html" :: Identifier
 flexColumn = "templates/flex-column.html" :: Identifier
 flexRow = "templates/flex-row.html" :: Identifier
 flexScroll = "templates/flex-scroll.html" :: Identifier
-
-makeTemplates :: Pattern -> Rules ()
-makeTemplates pat = match pat $ compile templateBodyCompiler

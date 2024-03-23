@@ -4,30 +4,33 @@ module Hakyll.Web.Menu where
 
 import Prelude hiding (lookup)
 
-import Control.Monad (liftM)
+import Control.Monad (liftM, (>=>))
 import Data.Binary (Binary)
 import Data.Data (Typeable)
 import Data.List (isPrefixOf)
 import Data.Map (delete, fromList, insert, lookup, toList)
-import Hakyll (Compiler, Context, Identifier, Item, Rules, compile, getUnderlying, itemBody, loadAndApplyTemplate, loadBody, makeItem, setVersion, version)
+import Hakyll (Compiler, Context, Identifier, Item, Pattern, Rules, compile, getUnderlying, hasVersion, itemBody, loadAndApplyTemplate, loadBody, makeItem, setVersion, version, (.&&.))
 import Hakyll.Web.Slug (loadSlug)
 import Text.HTML.TagSoup (Tag (TagOpen))
 
 menuSection :: String
 menuSection = "menuSection"
 
-compileMenuSection :: Context String -> Compiler (Item String)
-compileMenuSection ctx = do
+compileSingleSection :: Context String -> Compiler (Item String)
+compileSingleSection ctx = do
     getUnderlying
         >>= loadSlug
         >>= (makeItem . itemBody)
         >>= loadAndApplyTemplate "templates/link.html" ctx
 
-makeMenuSectionWith :: Compiler (Item String) -> Rules ()
-makeMenuSectionWith = version menuSection . compile
+compileListSection :: Context String -> Compiler (Item String)
+compileListSection ctx = compileSingleSection ctx >>= loadAndApplyTemplate "templates/menu-section.html" ctx
 
-makeMenuSection :: Context String -> Rules ()
-makeMenuSection = makeMenuSectionWith . compileMenuSection
+rulesMenuSectionWith :: Compiler (Item String) -> Rules ()
+rulesMenuSectionWith = version menuSection . compile
+
+rulesMenuSection :: Context String -> Rules ()
+rulesMenuSection = rulesMenuSectionWith . compileSingleSection
 
 loadMenuSection :: (Binary a, Typeable a) => Identifier -> Compiler a
 loadMenuSection = loadBody . setVersion (Just menuSection)
@@ -54,3 +57,6 @@ collapseMenu url a = case a of
                                 as'
             _otherwise -> TagOpen a as
     _otherwise -> a
+
+hasMenuSection :: Pattern -> Pattern
+hasMenuSection = (.&&. hasVersion menuSection)

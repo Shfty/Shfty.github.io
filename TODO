@@ -1,6 +1,3 @@
-* Finalize code structure pass
-  * Still a few elements in main that should be factored into modules
-
 * Derive default page icon from filetype
   * Can test with raw_index.html
 
@@ -50,10 +47,10 @@
   * Could integrate with page content as a vertical list on narrow screens?
 
 * Support arbitrary extensions for pages in recursive hierarchy
-  * Currently hardcoded to .md, should be an open set
+  * Currently hardcoded to .md, should be an open (or potentially closed w.r.t. pandoc inputs) set
 
 * Support for regular tags
-  * Apply recursive categories as regular category tags
+  * Apply nested categories as regular category tags
   * Extend with arbitrary set of metadata-defined tags
   * Generate free-standing index pages for each regular tag
 

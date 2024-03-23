@@ -1,11 +1,9 @@
 module Hakyll.Core.Config where
 
-import Data.Aeson.Types (FromJSON, Key, Object, parseMaybe, (.:))
-import Data.Maybe (fromMaybe)
-import Hakyll (Identifier, Metadata, Rules, getMetadata)
+import Hakyll (providerDirectory)
 
-loadConfig :: Identifier -> Rules Metadata
-loadConfig = getMetadata
+withProviderDirectory dir config =
+    config
+        { providerDirectory = dir
+        }
 
-configMaybe :: (FromJSON a) => a -> Key -> Object -> a
-configMaybe d key val = fromMaybe d $ parseMaybe (.: key) val
