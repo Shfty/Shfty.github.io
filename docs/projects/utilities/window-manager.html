@@ -1,0 +1,771 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>josh@artemis - Window Manager</title>
+<link rel="stylesheet" href="../../css/main.css" />
+<link rel="stylesheet" href="../../css/syntax.css" />
+
+    </head>
+    <body><flex-column><flex-row><flex-column class="menu divider-right"><header>
+    <a href="../../" class="fixed-width">
+        <pre> </pre>
+        <b>josh@artemis</b>
+    </a>
+</header>
+<flex-scroll><nav><details open>
+    <summary><a href="../.././" id="active">
+<x-glyph type="home" data-fg="purple"></x-glyph>
+<div style="display: inline;">~</div>
+</a>
+</summary><details>
+    <summary><a href="../../blog/">
+<x-glyph type="book" data-fg="purple"></x-glyph>
+<div style="display: inline;">Blog</div>
+</a>
+</summary><details>
+    <summary><a href="../../blog/hakyll/">
+<x-glyph type="haskell" data-fg="purple"></x-glyph>
+<div style="display: inline;">Hakyll</div>
+</a>
+</summary><a href="../../blog/hakyll/custom-syntax-highlighting-in-hakyll">
+<x-glyph type="haskell" data-fg="white"></x-glyph>
+<div style="display: inline;">Custom Syntax Highlighting in Hakyll</div>
+</a>
+<a href="../../blog/hakyll/nested-site-structure-in-hakyll">
+<x-glyph type="haskell" data-fg="white"></x-glyph>
+<div style="display: inline;">Nested site structure in Hakyll</div>
+</a>
+<a href="../../blog/hakyll/overridable-compilers-in-hakyll">
+<x-glyph type="haskell" data-fg="white"></x-glyph>
+<div style="display: inline;">Overridable compilers in Hakyll</div>
+</a>
+</details>
+<a href="../../blog/fie-to-the-chalice">
+<x-glyph type="document" data-fg="white"></x-glyph>
+<div style="display: inline;">Fie to the Chalice</div>
+</a>
+</details>
+<details open>
+    <summary><a href="../../projects/" id="active">
+<x-glyph type="project" data-fg="purple"></x-glyph>
+<div style="display: inline;">Projects</div>
+</a>
+</summary><details>
+    <summary><a href="../../projects/embedded/">
+<x-glyph type="chip" data-fg="purple"></x-glyph>
+<div style="display: inline;">Embedded</div>
+</a>
+</summary><a href="../../projects/embedded/teensy3">
+<x-glyph type="chip" data-fg="white"></x-glyph>
+<div style="display: inline;">Teensy3</div>
+</a>
+<a href="../../projects/embedded/negcon-ps3-pad">
+<x-glyph type="gamepad" data-fg="white"></x-glyph>
+<div style="display: inline;">NeGcon PS3 Pad</div>
+</a>
+<a href="../../projects/embedded/qmk-firmware">
+<x-glyph type="keyboard" data-fg="white"></x-glyph>
+<div style="display: inline;">QMK Firmware</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/experiments/">
+<x-glyph type="flask" data-fg="purple"></x-glyph>
+<div style="display: inline;">Experiments</div>
+</a>
+</summary><details>
+    <summary><a href="../../projects/experiments/proc-gen/">
+<x-glyph type="cpp" data-fg="purple"></x-glyph>
+<div style="display: inline;">ProcGen</div>
+</a>
+</summary><a href="../../projects/experiments/proc-gen/screenshot">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Generated Noise</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/experiments/antigen/">
+<x-glyph type="rust" data-fg="purple"></x-glyph>
+<div style="display: inline;">Antigen</div>
+</a>
+</summary><a href="../../projects/experiments/antigen/v1">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Antigen V1</div>
+</a>
+<a href="../../projects/experiments/antigen/v2">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Antigen V2</div>
+</a>
+<a href="../../projects/experiments/antigen/v3">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Antigen V3</div>
+</a>
+<a href="../../projects/experiments/antigen/v4">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Antigen V4</div>
+</a>
+<a href="../../projects/experiments/antigen/v5">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Antigen V5</div>
+</a>
+<a href="../../projects/experiments/antigen/v6">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Antigen V6</div>
+</a>
+</details>
+<a href="../../projects/experiments/bevy-instancing">
+<x-glyph type="bevy" data-fg="white"></x-glyph>
+<div style="display: inline;">Bevy Instancing</div>
+</a>
+<a href="../../projects/experiments/bevy-test-0-8">
+<x-glyph type="bevy" data-fg="white"></x-glyph>
+<div style="display: inline;">Bevy Test 0.8</div>
+</a>
+<a href="../../projects/experiments/editable-tree-model">
+<x-glyph type="cpp" data-fg="white"></x-glyph>
+<div style="display: inline;">Editable Tree Model</div>
+</a>
+<a href="../../projects/experiments/expression-parser">
+<x-glyph type="cpp" data-fg="white"></x-glyph>
+<div style="display: inline;">Expression Parser</div>
+</a>
+<a href="../../projects/experiments/pico-8">
+<x-glyph type="game-boy" data-fg="pink"></x-glyph>
+<div style="display: inline;">Pico-8</div>
+</a>
+<a href="../../projects/experiments/analytical-collision">
+<x-glyph type="godot" data-fg="white"></x-glyph>
+<div style="display: inline;">Analytical Collision</div>
+</a>
+<a href="../../projects/experiments/domain-specific-node-language">
+<x-glyph type="godot" data-fg="white"></x-glyph>
+<div style="display: inline;">Domain Specific Node Language</div>
+</a>
+<a href="../../projects/experiments/ecs-mk2">
+<x-glyph type="godot" data-fg="white"></x-glyph>
+<div style="display: inline;">ECS mk2</div>
+</a>
+<a href="../../projects/experiments/ecs">
+<x-glyph type="godot" data-fg="white"></x-glyph>
+<div style="display: inline;">ECS</div>
+</a>
+<a href="../../projects/experiments/parser-example">
+<x-glyph type="godot" data-fg="white"></x-glyph>
+<div style="display: inline;">Parser Example</div>
+</a>
+<a href="../../projects/experiments/rascull">
+<x-glyph type="godot" data-fg="white"></x-glyph>
+<div style="display: inline;">Rascull</div>
+</a>
+<a href="../../projects/experiments/sprite-armature">
+<x-glyph type="godot" data-fg="white"></x-glyph>
+<div style="display: inline;">Sprite Armature</div>
+</a>
+<a href="../../projects/experiments/carthy-table">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Carthy Table</div>
+</a>
+<a href="../../projects/experiments/cons">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Cons</div>
+</a>
+<a href="../../projects/experiments/frunk-test">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Frunk Test</div>
+</a>
+<a href="../../projects/experiments/hkt-emulation">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">HKT Emulation</div>
+</a>
+<a href="../../projects/experiments/nested-newtypes">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Nested Newtypes</div>
+</a>
+<a href="../../projects/experiments/playground">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Playground</div>
+</a>
+<a href="../../projects/experiments/sif">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">SIF</div>
+</a>
+<a href="../../projects/experiments/sql-test">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">SQL Test</div>
+</a>
+<a href="../../projects/experiments/store-v2">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Store V2</div>
+</a>
+<a href="../../projects/experiments/store">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Store</div>
+</a>
+<a href="../../projects/experiments/tlp-basic">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Type-Level BASIC</div>
+</a>
+<a href="../../projects/experiments/tui-threading-test">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">TUI Threading Test</div>
+</a>
+<a href="../../projects/experiments/uml-fsm">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">UML Finite State Machine</div>
+</a>
+<a href="../../projects/experiments/vimbed">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Vimbed</div>
+</a>
+<a href="../../projects/experiments/multi-monitor">
+<x-glyph type="unity" data-fg="white"></x-glyph>
+<div style="display: inline;">Multi-Monitor</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/game-prototypes/">
+<x-glyph type="gamepad" data-fg="purple"></x-glyph>
+<div style="display: inline;">Game Prototypes</div>
+</a>
+</summary><a href="../../projects/game-prototypes/action-hack">
+<x-glyph type="godot" data-fg="white"></x-glyph>
+<div style="display: inline;">Action Hack</div>
+</a>
+<a href="../../projects/game-prototypes/cosmic-commando">
+<x-glyph type="godot" data-fg="white"></x-glyph>
+<div style="display: inline;">Cosmic Commando</div>
+</a>
+<a href="../../projects/game-prototypes/hyper-shooting-2">
+<x-glyph type="godot" data-fg="white"></x-glyph>
+<div style="display: inline;">Hyper Shooting 2</div>
+</a>
+<a href="../../projects/game-prototypes/hyper-shooting">
+<x-glyph type="unity" data-fg="white"></x-glyph>
+<div style="display: inline;">Hyper Shooting</div>
+</a>
+<a href="../../projects/game-prototypes/survival-horror">
+<x-glyph type="unity" data-fg="white"></x-glyph>
+<div style="display: inline;">Survival Horror</div>
+</a>
+<a href="../../projects/game-prototypes/unity-cycles">
+<x-glyph type="unity" data-fg="white"></x-glyph>
+<div style="display: inline;">UnityCycles</div>
+</a>
+<a href="../../projects/game-prototypes/beat-em-up">
+<x-glyph type="unreal" data-fg="white"></x-glyph>
+<div style="display: inline;">Beat 'em Up</div>
+</a>
+<a href="../../projects/game-prototypes/danmaku-arcana">
+<x-glyph type="unreal" data-fg="white"></x-glyph>
+<div style="display: inline;">Danmaku Arcana</div>
+</a>
+<a href="../../projects/game-prototypes/fox-vr">
+<x-glyph type="unreal" data-fg="white"></x-glyph>
+<div style="display: inline;">Fox VR</div>
+</a>
+<a href="../../projects/game-prototypes/sea-radio">
+<x-glyph type="unreal" data-fg="white"></x-glyph>
+<div style="display: inline;">Sea Radio</div>
+</a>
+<a href="../../projects/game-prototypes/shmup-3d">
+<x-glyph type="unreal" data-fg="white"></x-glyph>
+<div style="display: inline;">Shmup 3D</div>
+</a>
+<a href="../../projects/game-prototypes/space-powerslide">
+<x-glyph type="unreal" data-fg="white"></x-glyph>
+<div style="display: inline;">Space Powerslide</div>
+</a>
+<a href="../../projects/game-prototypes/zz">
+<x-glyph type="unreal" data-fg="white"></x-glyph>
+<div style="display: inline;">ZZ</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/game-jam/">
+<x-glyph type="gamepad-square" data-fg="purple"></x-glyph>
+<div style="display: inline;">Game Jam</div>
+</a>
+</summary><details>
+    <summary><a href="../../projects/game-jam/synth-rider/">
+<x-glyph type="custom-folder" data-fg="purple"></x-glyph>
+<div style="display: inline;">Synth Rider</div>
+</a>
+</summary><a href="../../projects/game-jam/synth-rider/action">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Action</div>
+</a>
+<a href="../../projects/game-jam/synth-rider/aspect">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Aspect Ratio</div>
+</a>
+<a href="../../projects/game-jam/synth-rider/metal-rock">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Metal Rock</div>
+</a>
+<a href="../../projects/game-jam/synth-rider/neon">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Neon</div>
+</a>
+<a href="../../projects/game-jam/synth-rider/screenshot-1">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Screenshot</div>
+</a>
+<a href="../../projects/game-jam/synth-rider/screenshot-2">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Screenshot</div>
+</a>
+</details>
+</details>
+<details>
+    <summary><a href="../../projects/libraries/">
+<x-glyph type="library-shelves" data-fg="purple"></x-glyph>
+<div style="display: inline;">Libraries</div>
+</a>
+</summary><details>
+    <summary><a href="../../projects/libraries/inspector-gadget/">
+<x-glyph type="godot" data-fg="purple"></x-glyph>
+<div style="display: inline;">Inspector Gadget</div>
+</a>
+</summary><a href="../../projects/libraries/inspector-gadget/screenshot">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">UI Widgets</div>
+</a>
+</details>
+<a href="../../projects/libraries/boiler">
+<x-glyph type="godot" data-fg="white"></x-glyph>
+<div style="display: inline;">Boiler</div>
+</a>
+<a href="../../projects/libraries/texture-layered-mesh">
+<x-glyph type="godot" data-fg="white"></x-glyph>
+<div style="display: inline;">TextureLayered Mesh</div>
+</a>
+<a href="../../projects/libraries/bitset-collection">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Bitset Collection</div>
+</a>
+<a href="../../projects/libraries/borrow-derive">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Borrow Derive</div>
+</a>
+<a href="../../projects/libraries/carth">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Carth</div>
+</a>
+<a href="../../projects/libraries/char-framebuffer">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Char Framebuffer</div>
+</a>
+<a href="../../projects/libraries/collection-trait">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Collection Trait</div>
+</a>
+<a href="../../projects/libraries/database">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Database</div>
+</a>
+<a href="../../projects/libraries/usage">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Usage</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/academic/">
+<x-glyph type="mortar-board" data-fg="purple"></x-glyph>
+<div style="display: inline;">Academic</div>
+</a>
+</summary><a href="../../projects/academic/cartographer">
+<x-glyph type="cpp" data-fg="white"></x-glyph>
+<div style="display: inline;">Cartographer</div>
+</a>
+<a href="../../projects/academic/audio-visualizer">
+<x-glyph type="csharp" data-fg="white"></x-glyph>
+<div style="display: inline;">Audio Visualizer</div>
+</a>
+<a href="../../projects/academic/wing-war">
+<x-glyph type="csharp" data-fg="white"></x-glyph>
+<div style="display: inline;">Wing War</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/open-source/">
+<x-glyph type="open-source" data-fg="purple"></x-glyph>
+<div style="display: inline;">Open Source</div>
+</a>
+</summary><a href="../../projects/open-source/trenchbroom">
+<x-glyph type="cube" data-fg="orange"></x-glyph>
+<div style="display: inline;">TrenchBroom</div>
+</a>
+<a href="../../projects/open-source/webos">
+<x-glyph type="moon" data-fg="orange"></x-glyph>
+<div style="display: inline;">webOS</div>
+</a>
+<a href="../../projects/open-source/ppsspp">
+<x-glyph type="playstation" data-fg="cyan"></x-glyph>
+<div style="display: inline;">PPSSPP</div>
+</a>
+<a href="../../projects/open-source/retroarch">
+<x-glyph type="space-invaders" data-fg="white"></x-glyph>
+<div style="display: inline;">Retroarch</div>
+</a>
+<a href="../../projects/open-source/folded-1000-times">
+<x-glyph type="sword" data-fg="white"></x-glyph>
+<div style="display: inline;">Folded 1000 Times</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/computer-graphics/">
+<x-glyph type="picture" data-fg="purple"></x-glyph>
+<div style="display: inline;">Computer Graphics</div>
+</a>
+</summary><details>
+    <summary><a href="../../projects/computer-graphics/noise-gen/">
+<x-glyph type="cpp" data-fg="purple"></x-glyph>
+<div style="display: inline;">Noise Gen</div>
+</a>
+</summary><a href="../../projects/computer-graphics/noise-gen/screenshot">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Generated Noise</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/computer-graphics/analytical-rendering/">
+<x-glyph type="file-picture" data-fg="purple"></x-glyph>
+<div style="display: inline;">Analytical Rendering</div>
+</a>
+</summary><details>
+    <summary><a href="../../projects/computer-graphics/analytical-rendering/gl-tracer/">
+<x-glyph type="cpp" data-fg="purple"></x-glyph>
+<div style="display: inline;">GL Tracer</div>
+</a>
+</summary><a href="../../projects/computer-graphics/analytical-rendering/gl-tracer/box-warp">
+<x-glyph type="video" data-fg="white"></x-glyph>
+<div style="display: inline;">Box Warp</div>
+</a>
+<a href="../../projects/computer-graphics/analytical-rendering/gl-tracer/stretch-tower">
+<x-glyph type="video" data-fg="white"></x-glyph>
+<div style="display: inline;">Stretch Tower</div>
+</a>
+<a href="../../projects/computer-graphics/analytical-rendering/gl-tracer/stretch-tunnel">
+<x-glyph type="video" data-fg="white"></x-glyph>
+<div style="display: inline;">Stretch Tunnel</div>
+</a>
+<a href="../../projects/computer-graphics/analytical-rendering/gl-tracer/transparency-reflection-refraction">
+<x-glyph type="video" data-fg="white"></x-glyph>
+<div style="display: inline;">Transparency / Reflection / Refraction</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/computer-graphics/analytical-rendering/text-tracer/">
+<x-glyph type="cpp" data-fg="purple"></x-glyph>
+<div style="display: inline;">Text Tracer</div>
+</a>
+</summary><a href="../../projects/computer-graphics/analytical-rendering/text-tracer/portal-one-sided">
+<x-glyph type="video" data-fg="white"></x-glyph>
+<div style="display: inline;">One-sided Portal</div>
+</a>
+<a href="../../projects/computer-graphics/analytical-rendering/text-tracer/portal-two-sided">
+<x-glyph type="video" data-fg="white"></x-glyph>
+<div style="display: inline;">Two-sided Portal</div>
+</a>
+<a href="../../projects/computer-graphics/analytical-rendering/text-tracer/portal-volumetric">
+<x-glyph type="video" data-fg="white"></x-glyph>
+<div style="display: inline;">Volumetric Portal</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/computer-graphics/analytical-rendering/distance-field-studio/">
+<x-glyph type="godot" data-fg="purple"></x-glyph>
+<div style="display: inline;">Distance Field Studio</div>
+</a>
+</summary><a href="../../projects/computer-graphics/analytical-rendering/distance-field-studio/2d-debug">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">2D Debug</div>
+</a>
+<a href="../../projects/computer-graphics/analytical-rendering/distance-field-studio/editor">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Editor</div>
+</a>
+<a href="../../projects/computer-graphics/analytical-rendering/distance-field-studio/renderer">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Renderer</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/computer-graphics/analytical-rendering/rust-gpu-sdf/">
+<x-glyph type="rust" data-fg="purple"></x-glyph>
+<div style="display: inline;">Rust-GPU SDF</div>
+</a>
+</summary><a href="../../projects/computer-graphics/analytical-rendering/rust-gpu-sdf/animated">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Dynamic Implicit Surface</div>
+</a>
+</details>
+<a href="../../projects/computer-graphics/analytical-rendering/elysian">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Elysian</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/computer-graphics/palettizer/">
+<x-glyph type="godot" data-fg="purple"></x-glyph>
+<div style="display: inline;">Palettizer</div>
+</a>
+</summary><a href="../../projects/computer-graphics/palettizer/video">
+<x-glyph type="video" data-fg="white"></x-glyph>
+<div style="display: inline;">Animated Palette Effects</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/computer-graphics/rose-curve/">
+<x-glyph type="godot" data-fg="purple"></x-glyph>
+<div style="display: inline;">Rose Curve</div>
+</a>
+</summary><a href="../../projects/computer-graphics/rose-curve/video">
+<x-glyph type="video" data-fg="white"></x-glyph>
+<div style="display: inline;">Rose Curve</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/computer-graphics/vertex-smear/">
+<x-glyph type="godot" data-fg="purple"></x-glyph>
+<div style="display: inline;">Vertex Smear</div>
+</a>
+</summary><a href="../../projects/computer-graphics/vertex-smear/video">
+<x-glyph type="video" data-fg="white"></x-glyph>
+<div style="display: inline;">Vertex Smearing</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/computer-graphics/voxel-shader/">
+<x-glyph type="godot" data-fg="purple"></x-glyph>
+<div style="display: inline;">Voxel Shader</div>
+</a>
+</summary><a href="../../projects/computer-graphics/voxel-shader/screenshot">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Voxel Rendering</div>
+</a>
+</details>
+<a href="../../projects/computer-graphics/software-rendering">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Software Rendering</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/audio/">
+<x-glyph type="seti-audio" data-fg="purple"></x-glyph>
+<div style="display: inline;">Audio</div>
+</a>
+</summary><a href="../../projects/audio/libnuked-opn2-port">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">libnuked-opn2-port</div>
+</a>
+<a href="../../projects/audio/opn2-rs">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">OPN2-rs</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/commercial/">
+<x-glyph type="tie" data-fg="purple"></x-glyph>
+<div style="display: inline;">Commercial</div>
+</a>
+</summary><details>
+    <summary><a href="../../projects/commercial/acopperlypse/">
+<x-glyph type="unreal" data-fg="purple"></x-glyph>
+<div style="display: inline;">Acopperlypse</div>
+</a>
+</summary><a href="../../projects/commercial/acopperlypse/logo">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Logo</div>
+</a>
+<a href="../../projects/commercial/acopperlypse/screenshot-1">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Screenshot</div>
+</a>
+<a href="../../projects/commercial/acopperlypse/screenshot-2">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Screenshot</div>
+</a>
+<a href="../../projects/commercial/acopperlypse/screenshot-3">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Screenshot</div>
+</a>
+<a href="../../projects/commercial/acopperlypse/trailer">
+<x-glyph type="video" data-fg="white"></x-glyph>
+<div style="display: inline;">Trailer</div>
+</a>
+</details>
+<details>
+    <summary><a href="../../projects/commercial/dark-future/">
+<x-glyph type="unreal" data-fg="purple"></x-glyph>
+<div style="display: inline;">Dark Future: Blood Red States</div>
+</a>
+</summary><a href="../../projects/commercial/dark-future/logo">
+<x-glyph type="image" data-fg="white"></x-glyph>
+<div style="display: inline;">Logo</div>
+</a>
+</details>
+</details>
+<details>
+    <summary><a href="../../projects/tooling/">
+<x-glyph type="tools" data-fg="purple"></x-glyph>
+<div style="display: inline;">Tooling</div>
+</a>
+</summary><a href="../../projects/tooling/bevy-rust-gpu">
+<x-glyph type="bevy" data-fg="white"></x-glyph>
+<div style="display: inline;">Bevy Rust-GPU</div>
+</a>
+<a href="../../projects/tooling/qodot">
+<x-glyph type="godot" data-fg="white"></x-glyph>
+<div style="display: inline;">Qodot</div>
+</a>
+</details>
+<details open>
+    <summary><a href="../../projects/utilities/" id="active">
+<x-glyph type="van-utility" data-fg="purple"></x-glyph>
+<div style="display: inline;">Utilities</div>
+</a>
+</summary><a href="../../projects/utilities/window-manager" id="active">
+<x-glyph type="cpp" data-fg="white"></x-glyph>
+<div style="display: inline;">Window Manager</div>
+</a>
+<a href="../../projects/utilities/yaka">
+<x-glyph type="cpp" data-fg="white"></x-glyph>
+<div style="display: inline;">Y.A.K.A.</div>
+</a>
+<a href="../../projects/utilities/custom-markup-language">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Custom Markup Language</div>
+</a>
+<a href="../../projects/utilities/gnui">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">GNUI</div>
+</a>
+<a href="../../projects/utilities/shifty-bar">
+<x-glyph type="rust" data-fg="white"></x-glyph>
+<div style="display: inline;">Shifty Bar</div>
+</a>
+<a href="../../projects/utilities/i10">
+<x-glyph type="window-maximize" data-fg="white"></x-glyph>
+<div style="display: inline;">i10</div>
+</a>
+</details>
+</details>
+<a href="../../contact">
+<x-glyph type="contact" data-fg="green"></x-glyph>
+<div style="display: inline;">Contact</div>
+</a>
+<a href="../../raw_index">
+<x-glyph type="home" data-fg="white"></x-glyph>
+<div style="display: inline;">~</div>
+</a>
+<a href="../../about">
+<x-glyph type="information" data-fg="cyan"></x-glyph>
+<div style="display: inline;">About</div>
+</a>
+<a href="../../skills">
+<x-glyph type="lightning-bolt" data-fg="yellow"></x-glyph>
+<div style="display: inline;">Skills</div>
+</a>
+<a href="../../education">
+<x-glyph type="mortar-board" data-fg="pink"></x-glyph>
+<div style="display: inline;">Education</div>
+</a>
+<a href="../../experience">
+<x-glyph type="tie" data-fg="purple"></x-glyph>
+<div style="display: inline;">Experience</div>
+</a>
+</details>
+</nav></flex-scroll>
+</flex-column>
+<flex-column class="body"><header>
+    <flex-row style="justify-content: space-between">
+        <flex-row style="justify-content: flex-start; flex: none;">
+            <span data-bg="red" data-fg="bg" style="padding-left: 1rch">
+                <b>DEBUG</b>
+            </span>
+            <pre data-bg="red"> </pre>
+            <x-glyph type="left-hard-divider" data-fg="red"></x-glyph>
+            <pre> </pre>
+        </flex-row>
+        <flex-row style="justify-content: flex-start; overflow: scroll;">
+            <x-glyph type="branch" data-fg="purple"></x-glyph>
+            <pre> </pre>
+            <span data-fg="purple">master
+</span>
+            <pre> </pre>
+            <x-glyph type="left-soft-divider" data-fg="purple"></x-glyph>
+            <pre> </pre>
+            <a href="../.././">
+<x-glyph type="home" data-fg="white"></x-glyph>
+<div style="display: inline;">~</div>
+</a>
+                <pre> </pre>
+                <x-glyph type="left-soft-divider"></x-glyph>
+                <pre> </pre><a href="../../projects/">
+<x-glyph type="project" data-fg="white"></x-glyph>
+<div style="display: inline;">Projects</div>
+</a>
+                <pre> </pre>
+                <x-glyph type="left-soft-divider"></x-glyph>
+                <pre> </pre><a href="../../projects/utilities/">
+<x-glyph type="van-utility" data-fg="white"></x-glyph>
+<div style="display: inline;">Utilities</div>
+</a>
+                <pre> </pre>
+                <x-glyph type="left-soft-divider"></x-glyph>
+                <pre> </pre>
+            <div>
+<x-glyph type="cpp" data-fg="white"></x-glyph>
+<div style="display: inline;">Window Manager</div>
+</div>
+        </flex-row>
+        <flex-row style="justify-content: flex-start; flex: none;">
+            <pre> </pre>
+            <span>utf-8</span>
+            <pre> </pre>
+            <x-glyph type="right-soft-divider"></x-glyph>
+            <pre> </pre>
+            <x-glyph type="linux-tux"></x-glyph>
+            <pre> </pre>
+            <x-glyph type="right-soft-divider"></x-glyph>
+            <pre> </pre>
+            <div>
+                <x-glyph type="markdown"></x-glyph>
+                <span>markdown</span>
+            </div>
+            <pre>  </pre>
+            <span data-fg="purple">Top</span>
+            <pre>  </pre>
+            <x-glyph type="right-hard-divider" data-fg="red"></x-glyph>
+            <pre data-fg="bg" data-bg="red">   </pre>
+            <b data-fg="bg" data-bg="red">1:1</b>
+            <pre data-fg="bg" data-bg="red"> </pre>
+        </flex-row>
+    </flex-row>
+</header>
+<flex-scroll><main-content>
+    <h1><x-glyph type="cpp"></x-glyph>Window Manager</h1>
+    <article>
+        <section class="header">
+            </section>
+        <section><p>Qt-based window manager for Windows</p></section>
+    </article>
+</main-content>
+</flex-scroll>
+</flex-column>
+</flex-row>
+<footer>
+    <span class="fixed-width">
+        <span>Site generated with</span>
+        <pre> </pre>
+        <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        <pre> </pre>
+    </span>
+</footer>
+</flex-column>
+</body>
+</html>
