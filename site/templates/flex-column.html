@@ -3,11 +3,11 @@
     class="$class$"
     $endif$
 >
-    $if(before)$
-        $before$
-    $endif$
+    $-if(before)$
+        $-before-$
+    $endif-$
     $body$
-    $if(after)$
-        $after$
-    $endif$
+    $-if(after)$
+        $-after-$
+    $endif-$
 </flex-column>

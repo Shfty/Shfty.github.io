@@ -1,7 +1,7 @@
 module Site.Context where
 
 import Data.Functor ((<&>))
-import Hakyll (Context, Rules, constField, dateField, defaultContext, listField, preprocess)
+import Hakyll (Context, Rules, constField, dateField, defaultContext, functionField, listField, preprocess)
 import Hakyll.Core
 import Hakyll.Web
 import Site.Compiler as Compiler
@@ -9,7 +9,11 @@ import Site.Routes (liftPath)
 import System.Process (readProcess)
 
 site :: Context String
-site = liftPath $ extensionlessUrlField "url" <> fileTypeField fileTypes <> defaultContext
+site =
+    liftPath $
+        extensionlessUrlField "url"
+            <> fileTypeField fileTypes
+            <> defaultContext
 
 post :: Context String
 post = dateField "date" "%B %e, %Y" `mappend` site

@@ -6,15 +6,6 @@
   * Anything else should be shown in red
   * May be achievable in pure CSS
 
-* Improve debug mode header styling
-  * Currently styling three items explicitly,
-    should instead be providing a 'modeColor' field
-    that can be interpolated in
-
-* Cleanup pass for template whitespace trimming
-  * Need to add -$ / $- annotations to prevent whitespace leakage
-  * Should research the semantics first, as they don't seem immediately intuitive
-
 * Styling for image / video viewers
   * Should be able to use CSS contain / cover
   * Would also be nice to provide CSS click-to-zoom for high-res images

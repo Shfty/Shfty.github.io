@@ -1,16 +1,16 @@
 <main-content>
     <h1>
-        $if(icon)$
+        $-if(icon)-$
         <x-glyph type="$icon$"></x-glyph>
-        $endif$
-        $title$
+        $-endif-$
+        $title-$
     </h1>
     <article>
         <section>
-            $body$
+            $-body-$
         </section>
         <section>
-        $partial("templates/child-list.html")$
+        $-partial("templates/child-list.html")-$
         </section>
     </article>
 </main-content>

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           static-site-haskell
+name:           josh-at-artemis
 version:        0.3
 build-type:     Simple
 

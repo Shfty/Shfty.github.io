@@ -1,13 +1,7 @@
 <header>
     <flex-row style="justify-content: space-between">
         <flex-row style="justify-content: flex-start; flex: none;">
-            <span data-bg="
-                $-if(debugMode)-$
-                    red
-                $-else-$
-                    purple
-                $-endif-$
-            " data-fg="bg" style="padding-left: 1rch">
+            <span data-bg="$modeColor$" data-fg="bg" style="padding-left: 1rch">
                 <b>
                     $-if(debugMode)-$
                         DEBUG
@@ -16,20 +10,8 @@
                     $-endif-$
                 </b>
             </span>
-            <pre data-bg="
-                $-if(debugMode)-$
-                    red
-                $-else-$
-                    purple
-                $-endif-$
-            "> </pre>
-            <x-glyph type="left-hard-divider" data-fg="
-                $-if(debugMode)-$
-                    red
-                $-else-$
-                    purple
-                $-endif-$
-            "></x-glyph>
+            <pre data-bg="$modeColor$"> </pre>
+            <x-glyph type="left-hard-divider" data-fg="$modeColor$"></x-glyph>
             <pre> </pre>
         </flex-row>
         <flex-row style="justify-content: flex-start; overflow: scroll;">
@@ -39,16 +21,16 @@
             <pre> </pre>
             <x-glyph type="left-soft-divider" data-fg="purple"></x-glyph>
             <pre> </pre>
-            $for(breadcrumb)$
+            $for(breadcrumb)-$
                 <a href="$url$">
-                    $partial("templates/slug.html")$
+                    $-partial("templates/slug.html")-$
                 </a>
                 <pre> </pre>
                 <x-glyph type="left-soft-divider"></x-glyph>
                 <pre> </pre>
-            $endfor$
+            $-endfor$
             <div>
-                $partial("templates/slug.html")$
+                $-partial("templates/slug.html")-$
             </div>
         </flex-row>
         <flex-row style="justify-content: flex-start; flex: none;">
@@ -68,10 +50,10 @@
             <pre>  </pre>
             <span data-fg="purple">Top</span>
             <pre>  </pre>
-            <x-glyph type="right-hard-divider" data-fg="purple"></x-glyph>
-            <pre data-fg="bg" data-bg="purple">   </pre>
-            <b data-fg="bg" data-bg="purple">1:1</b>
-            <pre data-fg="bg" data-bg="purple"> </pre>
+            <x-glyph type="right-hard-divider" data-fg="$modeColor$"></x-glyph>
+            <pre data-fg="bg" data-bg="$modeColor$">   </pre>
+            <b data-fg="bg" data-bg="$modeColor$">1:1</b>
+            <pre data-fg="bg" data-bg="$modeColor$"> </pre>
         </flex-row>
     </flex-row>
 </header>

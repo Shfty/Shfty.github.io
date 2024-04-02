@@ -1,21 +1,21 @@
 <main-content>
     <h1>
-        $if(icon)$
+        $-if(icon)-$
         <x-glyph type="$icon$"></x-glyph>
-        $endif$
-        $title$
+        $-endif$
+        $-title-$
     </h1>
     <article>
         <section class="header">
-            $if(date)$
+            $-if(date)-$
                 Posted on $date$
-            $endif$
-            $if(author)$
+            $-endif$
+            $if(author)-$
                 by $author$
-            $endif$
+            $-endif-$
         </section>
         <section>
-            $body$
+            $-body-$
         </section>
     </article>
 </main-content>

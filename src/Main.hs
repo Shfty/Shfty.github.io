@@ -26,7 +26,9 @@ main = site $ do
     config <- Config.load $ fromFilePath "config"
 
     -- Get debug mode flag
-    let debugModeContext = boolField "debugMode" (const $ Config.debugMode config)
+    let debugModeContext =
+            boolField "debugMode" (const $ Config.debugMode config)
+                <> constField "modeColor" (Config.modeColor config)
 
     -- Assemble global site context
     let siteContext = branchContext <> debugModeContext <> Context.children <> Context.site

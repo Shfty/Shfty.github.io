@@ -10,6 +10,7 @@ import Hakyll (Identifier, Metadata, Rules, getMetadata)
 highlightStyle' = "highlightStyle" :: Key
 compileWallpapers' = "compileWallpapers" :: Key
 debugMode' = "debugMode" :: Key
+modeColor' = "modeColor" :: Key
 
 load :: Identifier -> Rules Metadata
 load = getMetadata
@@ -25,3 +26,9 @@ compileWallpapers = configMaybe False compileWallpapers'
 
 debugMode :: Object -> Bool
 debugMode = configMaybe False debugMode'
+
+modeColor :: Object -> String
+modeColor config = do
+    if debugMode config
+        then "red"
+        else "purple"
