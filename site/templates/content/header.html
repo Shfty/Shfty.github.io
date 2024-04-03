@@ -2,22 +2,16 @@
     <flex-row style="justify-content: space-between">
         <flex-row style="justify-content: flex-start; flex: none;">
             <span data-bg="$modeColor$" data-fg="bg" style="padding-left: 1rch">
-                <b>
-                    $-if(debugMode)-$
-                        DEBUG
-                    $-else-$
-                        NORMAL
-                    $-endif-$
-                </b>
+                <b>NORMAL</b>
             </span>
             <pre data-bg="$modeColor$"> </pre>
             <x-glyph type="left-hard-divider" data-fg="$modeColor$"></x-glyph>
             <pre> </pre>
         </flex-row>
         <flex-row style="justify-content: flex-start; overflow: scroll;">
-            <x-glyph type="branch" data-fg="purple"></x-glyph>
+            <x-glyph type="branch" data-fg="$modeColor$"></x-glyph>
             <pre> </pre>
-            <span data-fg="purple">$branch$</span>
+            <span data-fg="$modeColor$">$branch$</span>
             <pre> </pre>
             <x-glyph type="left-soft-divider" data-fg="purple"></x-glyph>
             <pre> </pre>
