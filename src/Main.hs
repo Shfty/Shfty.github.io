@@ -1,10 +1,15 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import Control.Monad
+import Data.Char
 import Data.Function
+import Data.List
+import Data.List.Utils
+import Data.Maybe
 import Hakyll
 import Hakyll.Core
 import Hakyll.Web
+import Hakyll.Web.Glyphs
 import Site
 import qualified Site.Compiler as Compiler
 import qualified Site.Config as Config
@@ -16,12 +21,14 @@ import qualified Site.Pattern.Extension as Extension
 import qualified Site.Routes as Routes
 import qualified Site.Rules as Rules
 import qualified Site.Template as Template
+import System.FilePath
+import Text.Blaze.Html
+import Text.Blaze.Html.Renderer.String
+import qualified Text.Blaze.Html5 as H
+import qualified Text.Blaze.Html5.Attributes as A
 
 main :: IO ()
 main = site $ do
-    branch <- Context.gitBranch
-    let debugMode = branch /= "master"
-    
     -- Load git branch into a context
     branchContext <- Context.branchField "branch"
 
@@ -29,12 +36,14 @@ main = site $ do
     config <- Config.load $ fromFilePath "config"
 
     -- Get debug mode flag
-    let debugModeContext =
-            (boolField "debugMode" $ const debugMode)
-                <> (constField "modeColor" (if debugMode then "red" else "purple"))
+    branch <- Context.gitBranch
+    let debugMode = branch /= "master"
+
+    let siteModeContext =
+            constField "modeColor" (if debugMode then "red" else "purple")
 
     -- Assemble global site context
-    let siteContext = branchContext <> debugModeContext <> Context.children <> Context.site
+    let siteContext = branchContext <> siteModeContext <> Context.children <> Context.site
 
     -- Load code highlighting style
     let highlightStyle = Config.highlightStyle config
@@ -98,3 +107,75 @@ main = site $ do
     Rules.category $ do
         Rules.layoutList categoryCtx siteContext
         Rules.final catSpec siteContext
+
+    let makeId =
+            fromFilePath
+                . (<.> "md")
+                . ("tags" </>)
+                . replace "+" "-plus"
+                . replace "#" "-sharp"
+                . replace " " "-"
+                . fmap toLower
+
+    -- Build tags
+    tags <- buildTagsWith getTags' Pattern.pages makeId
+
+    tagsRules
+        tags
+        ( \tag pats -> do
+            create [makeId tag] $ do
+                Rules.header siteContext
+
+                route $ setExtension "html"
+                compile $ do
+                    matches <- getMatches pats
+
+                    items <-
+                        mapM
+                            ( \a -> do
+                                Just route <- getRoute a
+                                slug <- loadSlug a
+                                return $ "<a href = \"/" ++ extensionlessUrl route ++ "\">" ++ itemBody slug ++ "</a>"
+                            )
+                            matches
+
+                    makeItem
+                        ( ("<h1>" ++ tag ++ "</h1>")
+                            <> mconcat items
+                        )
+                        >>= Compiler.final siteContext
+        )
+
+    create ["tags/index.md"] $ do
+        Rules.slug siteContext
+        Rules.header siteContext
+
+        route $ setExtension "html"
+        compile $ do
+            renderTagList' tags
+                >>= makeItem
+                >>= Compiler.final siteContext
+
+renderTagList' :: Tags -> Compiler String
+renderTagList' = renderTags makeLink mconcat
+  where
+    makeLink tag url count _ _ =
+        renderHtml $
+            H.li
+                ( glyph
+                    <> ( H.a ! A.href (toValue url) ! A.rel "tag" $
+                            toHtml (tag ++ " (" ++ show count ++ ")")
+                       )
+                )
+
+getTags' :: (MonadMetadata m) => Identifier -> m [String]
+getTags' identifier = do
+    tags <- getTags identifier
+    cat <- getCategory' identifier
+    return $ cat <> tags
+
+getCategory' :: (MonadMetadata m) => Identifier -> m [String]
+getCategory' identifier = do
+    let path = takeDirectory (toFilePath identifier) </> "index.md"
+    title <- getMetadataField (fromFilePath path) "title"
+    return $ if path == "pages/index.md" then [] else maybeToList title

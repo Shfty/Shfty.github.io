@@ -2,6 +2,7 @@
 title: Palettizer
 git: shfty-godot/palettizer
 icon: godot
+tags: Godot, GDScript
 published: 2024-02-08
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: Antigen
 icon: rust
+tags: Rust
 ---
 ## antigen
 

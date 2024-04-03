@@ -3,6 +3,7 @@ title: Sprite Armature
 git: shfty-godot/sprite-armature
 published: 2024-02-08
 icon: godot
+tags: Godot, GDScript
 todo: Screenshots, GIFs
 ---
 

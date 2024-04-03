@@ -2,6 +2,7 @@
 title: QMK Firmware
 git: shfty-embedded/qmk_firmware
 icon: keyboard
+tags: C
 published: 2024-02-08
 ---
 

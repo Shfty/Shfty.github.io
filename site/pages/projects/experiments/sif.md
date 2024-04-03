@@ -2,6 +2,7 @@
 title: SIF
 git: shfty-rust/sif
 published: 2024-02-08
+tags: Rust
 icon: rust
 ---
 

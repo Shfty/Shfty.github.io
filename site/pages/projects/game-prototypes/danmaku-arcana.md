@@ -3,6 +3,7 @@ title: Danmaku Arcana
 git: shfty-unreal/DanmakuArcana
 published: 2024-02-08
 icon: unreal
+tags: Unreal, Blueprint
 todo: Screenshots, GIFs
 ---
 

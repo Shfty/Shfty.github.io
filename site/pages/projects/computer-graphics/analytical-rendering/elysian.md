@@ -2,6 +2,7 @@
 title: Elysian
 git: Shfty/elysian
 icon: rust
+tags: Rust
 published: 2024-02-08
 ---
 

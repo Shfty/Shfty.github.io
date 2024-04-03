@@ -2,6 +2,7 @@
 title: Domain Specific Node Language
 git: shfty-godot/domain-specific-node-language
 icon: godot
+tags: Godot, GDScript
 published: 2024-02-08
 ---
 

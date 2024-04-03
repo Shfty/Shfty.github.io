@@ -2,6 +2,7 @@
 title: SQL Test
 git: shfty-rust/sql_test
 icon: rust
+tags: Rust, SQL
 published: 2024-02-08
 ---
 

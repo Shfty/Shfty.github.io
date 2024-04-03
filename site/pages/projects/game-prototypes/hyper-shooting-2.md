@@ -3,6 +3,7 @@ title: Hyper Shooting 2
 git: shfty-unreal/hyper-shooting-2
 published: 2024-02-08
 icon: godot
+tags: Godot, GDScript
 todo: Screenshots, GIFs
 ---
 

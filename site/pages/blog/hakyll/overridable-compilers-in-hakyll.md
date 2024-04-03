@@ -2,6 +2,7 @@
 title: Overridable compilers in Hakyll
 author: Josh ρ
 icon: haskell
+tags: Haskell
 published: 2024-02-13
 ---
 

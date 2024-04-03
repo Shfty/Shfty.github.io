@@ -3,6 +3,7 @@ title: Space Powerslide
 git: shfty-unreal/SpacePowerslide
 published: 2024-02-08
 icon: unreal
+tags: Unreal, Blueprint
 todo: Screenshots, GIFs
 ---
 

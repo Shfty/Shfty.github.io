@@ -2,6 +2,7 @@
 title: Text Tracer
 git: shfty-cpp/TextTracer
 icon: cpp
+tags: C++, Software Rendering, OpenGL
 published: 2024-02-08
 ---
 

@@ -3,7 +3,7 @@ title: Audio Visualizer
 git: shfty-csharp/AudioVisualizer
 icon: csharp
 published: 2024-02-08
-tags: Academic, C#
+tags: C#
 todo: Screenshots, GIFs
 ---
 

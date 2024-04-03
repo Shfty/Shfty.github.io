@@ -3,6 +3,7 @@ title: Action Hack
 git: shfty-godot/ActionHack
 published: 2024-02-08
 icon: godot
+tags: Godot, GDScript
 todo: Screenshots, GIFs
 ---
 

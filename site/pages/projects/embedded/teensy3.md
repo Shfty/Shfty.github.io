@@ -2,6 +2,7 @@
 title: Teensy3
 git: shfty-embedded/teensy3
 icon: chip
+tags: C++
 published: 2024-02-08
 ---
 

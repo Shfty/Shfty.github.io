@@ -3,6 +3,7 @@ title: Cosmic Commando
 git: shfty-godot/cosmic-commando-demo
 published: 2024-02-08
 icon: godot
+tags: Godot, GDScript
 todo: Screenshots, GIFs
 ---
 

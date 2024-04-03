@@ -40,6 +40,8 @@ notIndex = complement index
 
 categories = Directory.pages .&&. index .&&. hasNoVersion
 pages = Directory.pages .&&. notIndex .&&. notAsset .&&. notMetadata .&&. hasNoVersion
+pageImages = Directory.pages .&&. Extension.image .&&. hasNoVersion
+pageVideos = Directory.pages .&&. Extension.video .&&. hasNoVersion
 
 template = Directory.templates .&&. Extension.html
 

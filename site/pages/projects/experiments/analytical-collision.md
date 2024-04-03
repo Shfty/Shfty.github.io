@@ -3,6 +3,7 @@ title: Analytical Collision
 git: shfty-godot/analytical-collision
 published: 2024-02-08
 icon: godot
+tags: Godot, GDScript
 todo: Screenshots, GIFs
 ---
 

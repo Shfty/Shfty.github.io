@@ -3,6 +3,7 @@ title: Cartographer
 git: shfty-cpp/Cartographer
 icon: cpp
 published: 2024-02-08
+tags: C++
 todo: Screenshots, GIFs
 ---
 

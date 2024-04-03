@@ -2,6 +2,7 @@
 title: Rose Curve
 git: shfty-godot/rose-curve
 icon: godot
+tags: Godot
 published: 2024-02-08
 ---
 

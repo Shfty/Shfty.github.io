@@ -32,10 +32,10 @@ staticAsset :: Rules ()
 staticAsset = match Pattern.staticAsset copyFile
 
 pageImage :: Rules () -> Rules ()
-pageImage = match (Directory.pages .&&. Extension.image .&&. hasNoVersion)
+pageImage = match Pattern.pageImages
 
 pageVideo :: Rules () -> Rules ()
-pageVideo = match (Directory.pages .&&. Extension.video .&&. hasNoVersion)
+pageVideo = match Pattern.pageVideos
 
 page :: Rules () -> Rules ()
 page = match Pattern.pages
