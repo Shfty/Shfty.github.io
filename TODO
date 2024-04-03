@@ -1,24 +1,10 @@
-* Derive default page icon from filetype
-  * Can test with raw_index.html
-
-* Style git branch based on whether it is 'master' or not
-  * master should receive the standard purple style
-  * Anything else should be shown in red
-  * May be achievable in pure CSS
-
-* Styling for image / video viewers
-  * Should be able to use CSS contain / cover
-  * Would also be nice to provide CSS click-to-zoom for high-res images
-
-* Item-based embedding for image and video assets
-  * Can use metadata to separate image viewer content (subtitle, etc)
-    from main page content, inline automatically
-
-* Polish sorting algorithm
-  * Should be split between categories / pages
-    * Then split by icon
-      * Then sorted alphabetically
-  * Need to separate 'category pages' from categories
+* Finalize tag page structure
+  * Tags need metadata for the purpose of specifying icons
+    * Ideally should be able to populate site/tags with .md files,
+      and connect them up with metadata tags via custom logic
+    * Would allow the file route to be used as the tag,
+      instead of having to derive it from an arbitrary title
+  * Use templates to populate index and tag pages with lists of slugs
 
 * Formalize Categories / Pages model
   * Currently causing ex. 'Game Jam / Synth Rider' to display the wrong icon
@@ -29,28 +15,19 @@
   * Branch Pages (index.html with no sibling .html files)
   * Leaf Pages (non- index.html)
 
-* Full-width category links for menu
+* Styling for image / video viewers
+  * Should be able to use CSS contain / cover
+  * Would also be nice to provide CSS click-to-zoom for high-res images
 
-* Fix tux icon spacing
+* Polish sorting algorithm
+  * Should be split between categories / pages
+    * Then split by icon
+      * Then sorted alphabetically
+  * Need to separate 'category pages' from categories
 
 * Move breadcrumb into a separate header line
   * Too wide for title position
   * Could integrate with page content as a vertical list on narrow screens?
-
-* Support arbitrary extensions for pages in recursive hierarchy
-  * Currently hardcoded to .md, should be an open (or potentially closed w.r.t. pandoc inputs) set
-
-* Support for regular tags
-  * Apply nested categories as regular category tags
-  * Extend with arbitrary set of metadata-defined tags
-  * Generate free-standing index pages for each regular tag
-
-* Table of Contents support for markdown articles
-  * Can use Hakyll's withTags function to map over all tags
-    and collect data to drive a sidebar
-  * Parse into an HTML navigation section,
-    display in a right-side panel on sufficiently wide screens
-    * Can probably inline into main content on narrow devices
 
 * Formalize navigation panel on narrow screens
   * How to integrate nicely with a vertical layout?
@@ -62,5 +39,39 @@
     adjust scaling behaviour accordingly
   * Is there some more abstract media query to determine pixel density?
 
+Fixes
+------------
+* Tag generation for 'category pages'
+  * Currently omitted to prevent regular categories from contributing
+
+* Full-width category links for menu
+
+* Fix tux icon spacing
+
+Nice to have
+------------
+* Derive default page icon from filetype
+  * Can test with raw_index.html
+
+* Support arbitrary extensions for pages in recursive hierarchy
+  * Currently hardcoded to .md, should be an open (or potentially closed w.r.t. pandoc inputs) set
+
+* Table of Contents support for markdown articles
+  * Can use Hakyll's withTags function to map over all tags
+    and collect data to drive a sidebar
+  * Parse into an HTML navigation section,
+    display in a right-side panel on sufficiently wide screens
+    * Can probably inline into main content on narrow devices
+
 * JavaScript-driven scroll position indicator
   * Update main header to show percentage whenever scroll position changes
+
+* Refactor gh-pages action to manually package and deploy payload
+  * Currently uploading to the gh-pages folder,
+    and letting the default 'pages build and deploy' handle it
+  * Would be tidier and faster to handle it via explicit jobs
+
+* Item-based embedding for image and video assets
+  * Can use metadata to separate image viewer content (subtitle, etc)
+    from main page content, inline automatically
+
