@@ -1,6 +1,7 @@
 module Site.Context where
 
 import Data.Functor ((<&>))
+import Data.String.Utils (strip)
 import Hakyll (Context, Rules, constField, dateField, defaultContext, functionField, listField, preprocess)
 import Hakyll.Core
 import Hakyll.Web
@@ -18,10 +19,12 @@ site =
 post :: Context String
 post = dateField "date" "%B %e, %Y" `mappend` site
 
+gitBranch :: Rules String
+gitBranch = preprocess $ strip <$> readProcess "git" ["branch", "--show-current"] ""
+
 -- Read in the site's current git branch as a field
 branchField :: String -> Rules (Context a)
-branchField f = do
-    preprocess (readProcess "git" [f, "--show-current"] "" <&> constField f)
+branchField f = gitBranch <&> constField f
 
 children :: Context a
 children = listField "children" post Compiler.loadAndSortChildren

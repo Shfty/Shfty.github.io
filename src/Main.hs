@@ -19,6 +19,9 @@ import qualified Site.Template as Template
 
 main :: IO ()
 main = site $ do
+    branch <- Context.gitBranch
+    let debugMode = branch /= "master"
+    
     -- Load git branch into a context
     branchContext <- Context.branchField "branch"
 
@@ -27,8 +30,8 @@ main = site $ do
 
     -- Get debug mode flag
     let debugModeContext =
-            boolField "debugMode" (const $ Config.debugMode config)
-                <> constField "modeColor" (Config.modeColor config)
+            (boolField "debugMode" $ const debugMode)
+                <> (constField "modeColor" (if debugMode then "red" else "purple"))
 
     -- Assemble global site context
     let siteContext = branchContext <> debugModeContext <> Context.children <> Context.site
