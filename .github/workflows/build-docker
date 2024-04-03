@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Replaces the catthehacker/ubuntu:act-latest image
+# with a customized Haskell-friendly version,
+# to be run using act -p=false
+
+docker image rm -f catthehacker/ubuntu:act-latest
+docker build -t catthehacker/ubuntu:act-latest - < Dockerfile
