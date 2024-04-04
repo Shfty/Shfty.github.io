@@ -5,5 +5,5 @@ tags: Rust
 ---
 ## antigen
 
-Various iterations of experimental ECS-based game engine
+Various iterations of an experimental ECS-based game engine.
 

@@ -1,6 +1,7 @@
 ---
 title: Synth Rider
 published: 2024-02-08
+icon: unreal
 tags: Unreal
 ---
 Short-form time attack racing title developed in Unreal 4 for the Absurd Aspect Ratio Jam, as part of Team Gormless.
@@ -11,9 +12,9 @@ Short-form time attack racing title developed in Unreal 4 for the Absurd Aspect 
 
 [https://teamgormless.itch.io/synthrider-absurd-aspect-ratio-jam-2016](itch.io Page)
 
-![](screenshot-1.png)
+![Screenshot](screenshot-1.png)
 
-![](screenshot-2.png)
+![Screenshot](screenshot-2.png)
 
 ![Action](action.gif)
 

@@ -1,16 +1,28 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Site.Rules where
 
-import Hakyll (Context, Identifier, Pattern, Rules, compile, copyFileCompiler, getResourceBody, hasNoVersion, idRoute, match, route, templateBodyCompiler, (.&&.))
+import Hakyll (Compiler, Context, Identifier, Pattern, Rules, Tags, compile, copyFileCompiler, create, getMatches, getResourceBody, getRoute, hasNoVersion, idRoute, itemBody, makeItem, match, route, setExtension, tagsRules, templateBodyCompiler, (.&&.))
 import Hakyll.Core (emptyCompiler, matchIdent, overridableCompiler, parentRoute)
-import Hakyll.Web (compileListSection, hotReloadSASS, rulesHeader, rulesMenuSection, rulesMenuSectionWith, rulesSlug, rulesStyleCSS, rulesViewerWith)
+import Hakyll.Web (compileListSection, extensionlessUrl, hotReloadSASS, loadSlug, rulesHeader, rulesMenuSection, rulesMenuSectionWith, rulesSlug, rulesStyleCSS, rulesViewerWith)
 import Hakyll.Web.Breadcrumb (breadcrumbContext)
 import qualified Site.Compiler as Compiler
 import qualified Site.Identifier as Identifier
-import Site.Pattern as Pattern
-import Site.Pattern.Directory as Directory
-import Site.Pattern.Extension as Extension
+import Site.Pattern as Pattern (
+    categories,
+    mainScss,
+    pageImages,
+    pageVideos,
+    pages,
+    scss,
+    staticAsset,
+    template,
+ )
+import Site.Pattern.Directory as Directory ()
+import Site.Pattern.Extension as Extension ()
 import Site.Routes (base)
-import Site.Routes as Routes
+import Site.Routes as Routes (base)
+import qualified Site.Tags as Tags
 import qualified Site.Template as Template
 import Text.Pandoc.Highlighting (Style)
 
@@ -19,10 +31,10 @@ copyFile = do
     route idRoute
     compile copyFileCompiler
 
-final spec ctx = do
+final getSpec ctx = do
     route base
     compile $
-        overridableCompiler spec
+        overridableCompiler getSpec
             >>= Compiler.final ctx
 
 template :: Rules ()
@@ -43,11 +55,11 @@ page = match Pattern.pages
 category :: Rules () -> Rules ()
 category = match Pattern.categories
 
-slug :: Context String -> Rules ()
+slug :: (Identifier -> Compiler (Context String)) -> Rules ()
 slug = rulesSlug Template.slug
 
-header :: Context String -> Rules ()
-header ctx = rulesHeader Template.header (breadcrumbContext ctx <> ctx)
+header :: (Identifier -> Compiler (Context String)) -> Rules ()
+header getCtx = rulesHeader Template.header $ fmap (\ctx -> (breadcrumbContext ctx <> ctx)) . getCtx
 
 viewerPage :: Identifier -> Context String -> Rules ()
 viewerPage template ctx =
@@ -57,20 +69,18 @@ viewerPage template ctx =
 
 viewer :: Identifier -> Context String -> Context String -> Rules ()
 viewer template baseCtx menuCtx = do
-    layoutSingle baseCtx menuCtx
+    slug $ const $ return baseCtx
+    header $ const $ return baseCtx
+    layoutSingle menuCtx
     viewerPage template baseCtx
 
-layoutSingle :: Context String -> Context String -> Rules ()
-layoutSingle baseCtx menuCtx = do
-    slug baseCtx
-    rulesMenuSection menuCtx
-    header baseCtx
+layoutSingle :: Context String -> Rules ()
+layoutSingle ctx = do
+    rulesMenuSection ctx
 
-layoutList :: Context String -> Context String -> Rules ()
-layoutList baseCtx menuCtx = do
-    slug baseCtx
-    rulesMenuSectionWith $ compileListSection menuCtx
-    header baseCtx
+layoutList :: Context String -> Rules ()
+layoutList ctx = do
+    rulesMenuSectionWith $ compileListSection ctx
 
 footer :: Rules ()
 footer =
@@ -82,3 +92,43 @@ styleCSS = rulesStyleCSS Identifier.syntaxCss
 
 sass :: Rules ()
 sass = hotReloadSASS Pattern.mainScss Pattern.scss
+
+tagIndex :: Tags -> Context String -> Rules ()
+tagIndex tags ctx =
+    create ["tags/index.md"] $ do
+        slug $ const $ return ctx
+        header $ const $ return ctx
+
+        route $ setExtension "html"
+        compile $ do
+            Tags.renderTagList tags
+                >>= makeItem
+                >>= Compiler.final ctx
+
+tagPages :: (String -> Identifier) -> Tags -> Context String -> Rules ()
+tagPages makeId tags ctx =
+    tagsRules
+        tags
+        ( \tag pats -> do
+            create [makeId tag] $ do
+                header $ const $ return ctx
+
+                route $ setExtension "html"
+                compile $ do
+                    matches <- getMatches pats
+
+                    items <-
+                        mapM
+                            ( \a -> do
+                                Just route <- getRoute a
+                                slug <- loadSlug a
+                                return $ "<a href = \"/" ++ extensionlessUrl route ++ "\">" ++ itemBody slug ++ "</a>"
+                            )
+                            matches
+
+                    makeItem
+                        ( ("<h1>" ++ tag ++ "</h1>")
+                            <> mconcat items
+                        )
+                        >>= Compiler.final ctx
+        )

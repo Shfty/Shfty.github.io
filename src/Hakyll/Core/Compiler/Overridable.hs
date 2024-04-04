@@ -55,9 +55,10 @@ mapDefaults f spec = spec{getDefaults = f $ getDefaults spec}
 splitList a = fromText <$> (strip <$> splitOn "," (fromString a))
 
 -- Compiler that can override compilers, templates, and context from page metadata
-overridableCompiler :: CompilerSpec String -> Compiler (Item String)
-overridableCompiler spec = do
+overridableCompiler :: (Identifier -> Compiler (CompilerSpec String)) -> Compiler (Item String)
+overridableCompiler getSpec = do
     ident <- getUnderlying
+    spec <- getSpec ident
     meta <- getMetadata ident
 
     let providers = getProviders spec

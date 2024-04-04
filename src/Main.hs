@@ -3,13 +3,10 @@
 import Control.Monad
 import Data.Char
 import Data.Function
-import Data.List
 import Data.List.Utils
-import Data.Maybe
 import Hakyll
 import Hakyll.Core
 import Hakyll.Web
-import Hakyll.Web.Glyphs
 import Site
 import qualified Site.Compiler as Compiler
 import qualified Site.Config as Config
@@ -21,11 +18,8 @@ import qualified Site.Pattern.Extension as Extension
 import qualified Site.Routes as Routes
 import qualified Site.Rules as Rules
 import qualified Site.Template as Template
+import qualified Site.Tags as Tags
 import System.FilePath
-import Text.Blaze.Html
-import Text.Blaze.Html.Renderer.String
-import qualified Text.Blaze.Html5 as H
-import qualified Text.Blaze.Html5.Attributes as A
 
 main :: IO ()
 main = site $ do
@@ -98,15 +92,22 @@ main = site $ do
     Rules.pageImage $ Rules.viewer Template.image imageCtx siteContext
     Rules.pageVideo $ Rules.viewer Template.video videoCtx siteContext
 
+    let getSpec = Compiler.ifCategory catSpec pageSpec
+    let getCtx = Compiler.ifCategory categoryCtx pageCtx
+
     -- Compile pages
     Rules.page $ do
-        Rules.layoutSingle pageCtx siteContext
-        Rules.final pageSpec siteContext
+        Rules.slug getCtx
+        Rules.header getCtx
+        Rules.layoutSingle siteContext
+        Rules.final getSpec siteContext
 
     -- Compile categories
     Rules.category $ do
-        Rules.layoutList categoryCtx siteContext
-        Rules.final catSpec siteContext
+        Rules.slug getCtx
+        Rules.header getCtx
+        Rules.layoutList siteContext
+        Rules.final getSpec siteContext
 
     let makeId =
             fromFilePath
@@ -118,64 +119,6 @@ main = site $ do
                 . fmap toLower
 
     -- Build tags
-    tags <- buildTagsWith getTags' Pattern.pages makeId
-
-    tagsRules
-        tags
-        ( \tag pats -> do
-            create [makeId tag] $ do
-                Rules.header siteContext
-
-                route $ setExtension "html"
-                compile $ do
-                    matches <- getMatches pats
-
-                    items <-
-                        mapM
-                            ( \a -> do
-                                Just route <- getRoute a
-                                slug <- loadSlug a
-                                return $ "<a href = \"/" ++ extensionlessUrl route ++ "\">" ++ itemBody slug ++ "</a>"
-                            )
-                            matches
-
-                    makeItem
-                        ( ("<h1>" ++ tag ++ "</h1>")
-                            <> mconcat items
-                        )
-                        >>= Compiler.final siteContext
-        )
-
-    create ["tags/index.md"] $ do
-        Rules.slug siteContext
-        Rules.header siteContext
-
-        route $ setExtension "html"
-        compile $ do
-            renderTagList' tags
-                >>= makeItem
-                >>= Compiler.final siteContext
-
-renderTagList' :: Tags -> Compiler String
-renderTagList' = renderTags makeLink mconcat
-  where
-    makeLink tag url count _ _ =
-        renderHtml $
-            H.li
-                ( glyph
-                    <> ( H.a ! A.href (toValue url) ! A.rel "tag" $
-                            toHtml (tag ++ " (" ++ show count ++ ")")
-                       )
-                )
-
-getTags' :: (MonadMetadata m) => Identifier -> m [String]
-getTags' identifier = do
-    tags <- getTags identifier
-    cat <- getCategory' identifier
-    return $ cat <> tags
-
-getCategory' :: (MonadMetadata m) => Identifier -> m [String]
-getCategory' identifier = do
-    let path = takeDirectory (toFilePath identifier) </> "index.md"
-    title <- getMetadataField (fromFilePath path) "title"
-    return $ if path == "pages/index.md" then [] else maybeToList title
+    tags <- buildTagsWith Tags.getTags Pattern.pages makeId
+    Rules.tagIndex tags siteContext
+    Rules.tagPages makeId tags siteContext

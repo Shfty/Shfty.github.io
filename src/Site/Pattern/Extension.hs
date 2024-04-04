@@ -16,6 +16,7 @@ webm = extensionPat "webm"
 woff = extensionPat "woff"
 woff2 = extensionPat "woff2"
 
+md = extensionPat "md"
 html = extensionPat "html"
 scss = extensionPat "scss"
 

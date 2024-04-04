@@ -18,6 +18,7 @@ executables:
       - Site.Pattern.Extension
       - Site.Routes
       - Site.Rules
+      - Site.Tags
       - Site.Template
       - Data.Map.Set
       - Hakyll.Core
